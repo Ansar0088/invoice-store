@@ -208,7 +208,7 @@ const InvoiceHome = (props: any) => {
                     )}
                     <div className="mt-5">
                       <p className="font-bold">Items List</p>
-                      {inputs.map((input) => (
+                      {inputs.map((input: any) => (  
                         <div key={input.id} className="flex items-center gap-2">
                           <Input
                             type="text"
