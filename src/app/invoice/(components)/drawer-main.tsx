@@ -1,18 +1,18 @@
-'use client'
+"use client";
 import React, { useState } from "react";
 import {
-    Drawer,
-    DrawerClose,
-    DrawerContent,
-    DrawerFooter,
-    DrawerTrigger,
-  } from "@/components/ui/drawer"
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerFooter,
+  DrawerTrigger,
+} from "@/components/ui/drawer";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-const Drawer = () => {
+const DrawerMian = () => {
   const [inputs, setInputs] = useState([3]);
 
   const AddInputs = () => {
@@ -28,7 +28,10 @@ const Drawer = () => {
       setInputs(inputs.slice(0, inputs.length - 1));
     }
   };
-  
+  interface Input {
+    id: number;
+    name: string;
+  }
   return (
     <>
       <Drawer direction="left">
@@ -81,7 +84,7 @@ const Drawer = () => {
 
                 <div className="mt-5">
                   <p className="font-bold">Items List</p>
-                  {inputs.map((input) => (
+                  {inputs.map((input: any) => (
                     <div key={input.id} className="flex items-center gap-2">
                       <Input
                         type="text"
@@ -144,4 +147,4 @@ const Drawer = () => {
   );
 };
 
-export default Drawer;
+export default DrawerMian;
