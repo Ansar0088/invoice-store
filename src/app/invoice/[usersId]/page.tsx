@@ -31,7 +31,7 @@ const UserPage = () => {
   const { usersId } = useParams();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
-  // const [status, setStatus] = useState("pending");
+  const [status, setStatus] = useState("pending");
 
   const {
     register,
