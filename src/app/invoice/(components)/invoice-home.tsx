@@ -78,8 +78,8 @@ const InvoiceHome = () => {
     });
     setInvoices(sortedInvoices);
   };
-   // Filter by pending
-   const handleCheckboxPending = (isChecked: any) => {
+  // Filter by pending
+  const handleCheckboxPending = (isChecked: any) => {
     setIsChecked((prevState) => !prevState);
     const sortedInvoices = [...invoices].sort((a, b) => {
       if (isChecked) {
@@ -90,7 +90,7 @@ const InvoiceHome = () => {
     });
     setInvoices(sortedInvoices);
   };
-  
+
   console.log(isChecked);
   // fields Addition logic
   const handleQuantityChange = (index: any) => (event: any) => {
@@ -108,7 +108,7 @@ const InvoiceHome = () => {
     setValue(`items.${index}.price`, price);
     setValue(`items.${index}.total`, total);
   };
-  
+
   return (
     <div className="container mt-10">
       <div className="flex gap-5 justify-between items-center">
@@ -131,24 +131,22 @@ const InvoiceHome = () => {
             <DropdownMenuContent className="w-20 h-20 flex flex-col gap-1 text-center pl-6">
               <div className="flex gap-2 items-center">
                 <Checkbox
-                   id="Checkbox"
-                   checked={isChecked}
-                   onCheckedChange={handleCheckboxPending}
+                  id="Checkbox"
+                  checked={isChecked}
+                  onCheckedChange={handleCheckboxPending}
                 />
                 <label htmlFor="terms" className="text-sm font-medium">
                   pending
                 </label>
               </div>
               <div className="flex gap-2 items-center ">
-                <Checkbox
-                />
+                <Checkbox />
                 <label htmlFor="terms" className="text-sm font-medium">
                   paid
                 </label>
               </div>
               <div className="flex gap-2 items-center">
-                <Checkbox
-                />
+                <Checkbox />
                 <label htmlFor="terms" className="text-sm font-medium">
                   draft
                 </label>
@@ -383,7 +381,7 @@ const InvoiceHome = () => {
                     </DrawerClose>
                     <div>
                       <Button
-                       // onClick={() => handleSaveAsDraft(getValues())} 
+                        // onClick={() => handleSaveAsDraft(getValues())}
                         className="dark:bg-[#1E2139] dark:text-white hover:shadow-[2px_2px_0px_0px_rgba(0,0,0)] transition duration-300"
                       >
                         Save as draft
@@ -430,9 +428,20 @@ const InvoiceHome = () => {
                     <p>{invoice.postCode}</p>
                     <Button
                       size={"lg"}
-                      className="bg-[#FFF8F0]  text-[#FF9F4D] dark:bg-[#2B2736] rounded-md text-sm font-semibold"
+                      className={cn(
+                        "rounded-md text-sm font-semibold dark:bg-[#2B2736]",
+                        {
+                          "bg-[#F3FDF9] text-[#84E4B6]":
+                            invoice.status === "paid",
+                          "bg-[#FFF8F0] text-[#FF9F4D]":
+                            invoice.status === "pending",
+                          "bg-[#E0E0E0] text-[#757575]":
+                            invoice.status === "draft",
+                        }
+                      )}
                     >
-                      {invoice.status}
+                      {invoice.status.charAt(0).toUpperCase() +
+                        invoice.status.slice(1)}{" "}
                     </Button>
                   </div>
                 </Reorder.Item>
