@@ -74,3 +74,14 @@
       @apply bg-background text-foreground;
     }
   }
+
+  @keyframes slide {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(10px); }
+  }
+  
+  .arrow-animate {
+    display: inline-block;
+    margin-left: 5px;
+    animation: slide 1s infinite alternate ease-in-out;
+  }
