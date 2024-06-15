@@ -92,7 +92,7 @@ const InvoiceHome = () => {
   };
 
   console.log(isChecked);
-  // fields Addition logic
+  // fields Addition Logic
   const handleQuantityChange = (index: any) => (event: any) => {
     const quantity = parseFloat(event.target.value);
     const price = getValues(`items.${index}.price`);
@@ -432,16 +432,18 @@ const InvoiceHome = () => {
                         "rounded-md text-sm font-semibold dark:bg-[#2B2736]",
                         {
                           "bg-[#F3FDF9] text-[#84E4B6]":
-                            invoice.status === "paid",
+                            invoice?.status === "paid",
                           "bg-[#FFF8F0] text-[#FF9F4D]":
-                            invoice.status === "pending",
-                          "bg-[#E0E0E0] text-[#757575]":
-                            invoice.status === "draft",
+                            invoice?.status === "pending",
+                          "bg-[#f89797] text-[#757575]":
+                            invoice?.status === "draft",
                         }
                       )}
                     >
-                      {invoice.status.charAt(0).toUpperCase() +
-                        invoice.status.slice(1)}{" "}
+                      {invoice?.status
+                        ? invoice.status.charAt(0).toUpperCase() +
+                          invoice.status.slice(1)
+                        : "Pending"}
                     </Button>
                   </div>
                 </Reorder.Item>
