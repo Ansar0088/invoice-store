@@ -440,8 +440,11 @@ const InvoiceHome = () => {
                         }
                       )}
                     >
-                      {invoice.status.charAt(0).toUpperCase() +
-                        invoice.status.slice(1)}{" "}
+                      {invoice.status
+                        ? `${invoice.status
+                            .charAt(0)
+                            .toUpperCase()}${invoice.status.slice(1)}`
+                        : "No Status"}
                     </Button>
                   </div>
                 </Reorder.Item>
