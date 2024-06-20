@@ -428,6 +428,7 @@ const InvoiceHome = () => {
                     <p>{invoice.postCode}</p>
                     <Button
                       size={"lg"}
+                      variant={"outline"}
                       className={cn(
                         "rounded-md text-sm font-semibold dark:bg-[#2B2736]",
                         {
