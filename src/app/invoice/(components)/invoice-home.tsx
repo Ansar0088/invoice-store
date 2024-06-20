@@ -118,7 +118,7 @@ const InvoiceHome = () => {
     const updatedInvoices = [...invoices, draftInvoice];
     setInvoices(updatedInvoices);
     localStorage.setItem("invoices", JSON.stringify(updatedInvoices));
-    alert("Invoice saved as draft");
+    // alert("Invoice saved as draft");
   };
   return (
     <div className="container mt-10">

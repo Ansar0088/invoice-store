@@ -13,5 +13,5 @@ export type FormInputs = {
     price: number;
     total: number;
   }[];
-  status: "pending" | "paid" | "draft";
+  status: "pending" | "paid" | "draft" | string;
 };
