@@ -165,13 +165,19 @@ const UserPage = () => {
           <Button
             size="lg"
             className={cn(
-              "rounded-md text-sm font-semibold dark:bg-[#2B2736]",
-              invoice.status === "paid"
-                ? "bg-[#F3FDF9] text-[#84E4B6]"
-                : "bg-[#FFF8F0] text-[#FF9F4D]"
+              "rounded-md w-32 text-sm font-semibold dark:bg-[#2B2736]",
+              {
+                "bg-[#F3FDF9] text-[#84E4B6]": invoice.status === "paid",
+                "bg-[#FFF8F0] text-[#FF9F4D]": invoice.status === "pending",
+                "bg-[#E0E0E0] text-[#757575]": invoice.status === "draft",
+              }
             )}
           >
-            {invoice.status === "paid" ? "Paid" : "Pending"}
+            {invoice.status === "paid"
+              ? "Paid"
+              : invoice.status === "draft"
+              ? "Draft"
+              : "Pending"}
           </Button>
         </div>
         <div>
@@ -279,7 +285,7 @@ const UserPage = () => {
                 <p>Street Address</p>
                 <Input
                   className={cn(
-                    "outline-none border rounded-md",
+                    "outline-none border rounded-md dark:bg-[#252945]",
                     errors.streetAddress ? "border-red-500" : "border-slate-300"
                   )}
                   placeholder="address"
@@ -296,7 +302,7 @@ const UserPage = () => {
                   <p className="text-xs mb-1">City</p>
                   <Input
                     className={cn(
-                      "outline-none border rounded-md",
+                      "outline-none border rounded-md dark:bg-[#252945]",
                       errors.city ? "border-red-500" : "border-slate-300"
                     )}
                     {...register("city", { required: true })}
@@ -311,7 +317,7 @@ const UserPage = () => {
                   <p className="text-xs mb-1">Post Code</p>
                   <Input
                     className={cn(
-                      "outline-none border rounded-md",
+                      "outline-none border rounded-md dark:bg-[#252945]",
                       errors.postCode ? "border-red-500" : "border-slate-300"
                     )}
                     {...register("postCode", { required: true })}
@@ -326,7 +332,7 @@ const UserPage = () => {
                   <p className="text-xs mb-1">Country</p>
                   <Input
                     className={cn(
-                      "outline-none border rounded-md",
+                      "outline-none border rounded-md dark:bg-[#252945]",
                       errors.country ? "border-red-500" : "border-slate-300"
                     )}
                     {...register("country", { required: true })}
@@ -343,7 +349,7 @@ const UserPage = () => {
                 <p className="text-xs font-normal mb-1">Clients Name</p>
                 <Input
                   className={cn(
-                    "outline-none border rounded-md",
+                    "outline-none border rounded-md dark:bg-[#252945]",
                     errors.ClientsName ? "border-red-500" : "border-slate-300"
                   )}
                   {...register("ClientsName", { required: true })}
@@ -356,7 +362,7 @@ const UserPage = () => {
                 <p className="text-xs font-normal mb-1 mt-3">Clients Email</p>
                 <Input
                   className={cn(
-                    "outline-none border rounded-md",
+                    "outline-none border rounded-md dark:bg-[#252945]",
                     errors.ClientsEmail ? "border-red-500" : "border-slate-300"
                   )}
                   {...register("ClientsEmail", { required: true })}
@@ -373,7 +379,7 @@ const UserPage = () => {
                       <Input
                         type="text"
                         className={cn(
-                          "outline-none border rounded-md",
+                          "outline-none rounded-md dark:bg-[#252945] ",
                           errors.items?.[index]?.ItemName
                             ? "border-red-500"
                             : "border-slate-300"
@@ -386,7 +392,7 @@ const UserPage = () => {
                       <Input
                         type="number"
                         className={cn(
-                          "outline-none border rounded-md",
+                          "outline-none rounded-md dark:bg-[#252945]",
                           errors.items?.[index]?.Quantity
                             ? "border-red-500"
                             : "border-slate-300"
@@ -400,7 +406,7 @@ const UserPage = () => {
                       <Input
                         type="number"
                         className={cn(
-                          "outline-none border rounded-md",
+                          "outline-none    rounded-md dark:bg-[#252945]",
                           errors.items?.[index]?.price
                             ? "border-red-500"
                             : "border-slate-300"
@@ -411,7 +417,7 @@ const UserPage = () => {
                         placeholder="Price"
                         onChange={handlePriceChange(index)}
                       />
-                      <div className="border p-2 px-8 rounded-md">
+                      <div className="border p-2 px-8 rounded-md dark:bg-[#252945]">
                         <p>${getValues(`items.${index}.total`)}</p>
                       </div>
                       <Button
@@ -434,7 +440,7 @@ const UserPage = () => {
                       append({ ItemName: "", Quantity: 1, price: 0, total: 0 })
                     }
                     size={"sm"}
-                    className="mr-2 text-sm hover:shadow-[3px_3px_0px_0px_rgba(0,0,0)] transition duration-300"
+                    className="mr-2 text-sm dark:bg-[#252945] dark:text-white"
                   >
                     <Image
                       src="/add.svg"
@@ -451,14 +457,14 @@ const UserPage = () => {
             <DrawerFooter>
               <div className="flex gap-2 mx-auto">
                 <Button
-                  className="w-40 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0)] transition duration-300"
+                  className="w-40 dark:bg-[#252945] dark:text-white"
                   onClick={() => setIsDrawerOpen(false)}
                 >
                   Discard
                 </Button>
                 <Button
                   type="submit"
-                  className="w-40 hover:shadow-[2px_2px_0px_0px_rgba(0,0,0)] transition duration-300"
+                  className="w-40 dark:bg-[#252945] dark:text-white"
                 >
                   Save & send
                 </Button>

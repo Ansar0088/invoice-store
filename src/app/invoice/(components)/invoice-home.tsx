@@ -109,6 +109,17 @@ const InvoiceHome = () => {
     setValue(`items.${index}.total`, total);
   };
 
+  const handleSaveAsDraft = () => {
+    const draftInvoice = {
+      ...getValues(),
+      id: Date.now().toString(),
+      status: "draft",
+    };
+    const updatedInvoices = [...invoices, draftInvoice];
+    setInvoices(updatedInvoices);
+    localStorage.setItem("invoices", JSON.stringify(updatedInvoices));
+    alert("Invoice saved as draft");
+  };
   return (
     <div className="container mt-10">
       <div className="flex gap-5 justify-between items-center">
@@ -120,7 +131,7 @@ const InvoiceHome = () => {
         </div>
         <div className="flex items-center gap-3 mr-5">
           <p className="text-lg text-slate-700">
-            Checkbox is {JSON.stringify(isChecked)}
+            {/* Checkbox is {JSON.stringify(isChecked)} */}
           </p>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -201,7 +212,7 @@ const InvoiceHome = () => {
                           message: "Street Address is required",
                         },
                       })}
-                      className={cn("input", {
+                      className={cn("input dark:bg-[#252945]", {
                         "border border-red-500": errors.streetAddress,
                       })}
                       placeholder="Street Address"
@@ -218,7 +229,7 @@ const InvoiceHome = () => {
                       <Input
                         placeholder="city"
                         className={cn(
-                          "outline-none border rounded-md",
+                          "outline-none border rounded-md dark:bg-[#252945]",
                           errors.city ? "border-red-500" : "border-slate-300"
                         )}
                         {...register("city", { required: true })}
@@ -234,7 +245,7 @@ const InvoiceHome = () => {
                       <Input
                         placeholder="post code"
                         className={cn(
-                          "outline-none border rounded-md",
+                          "outline-none border rounded-md dark:bg-[#252945]",
                           errors.postCode
                             ? "border-red-500"
                             : "border-slate-300"
@@ -252,7 +263,7 @@ const InvoiceHome = () => {
                       <Input
                         placeholder="country"
                         className={cn(
-                          "outline-none border rounded-md",
+                          "outline-none border rounded-md dark:bg-[#252945]",
                           errors.country ? "border-red-500" : "border-slate-300"
                         )}
                         {...register("country", { required: true })}
@@ -270,7 +281,7 @@ const InvoiceHome = () => {
                     <Input
                       placeholder="clientsname"
                       className={cn(
-                        "outline-none border rounded-md",
+                        "outline-none border rounded-md dark:bg-[#252945]",
                         errors.ClientsName
                           ? "border-red-500"
                           : "border-slate-300"
@@ -288,7 +299,7 @@ const InvoiceHome = () => {
                     <Input
                       placeholder="clientsemail"
                       className={cn(
-                        "outline-none border rounded-md",
+                        "outline-none  rounded-md dark:bg-[#252945]",
                         errors.ClientsEmail
                           ? "border-red-500"
                           : "border-slate-300"
@@ -306,7 +317,9 @@ const InvoiceHome = () => {
                         <div key={field.id} className="flex items-center gap-2">
                           <Input
                             type="text"
-                            className={cn("outline-none border rounded-md")}
+                            className={cn(
+                              "outline-none border rounded-md dark:bg-[#252945]"
+                            )}
                             {...register(`items.${index}.ItemName`, {
                               required: true,
                             })}
@@ -314,7 +327,9 @@ const InvoiceHome = () => {
                           />
                           <Input
                             type="number"
-                            className={cn("outline-none border rounded-md")}
+                            className={cn(
+                              "outline-none    rounded-md dark:bg-[#252945]"
+                            )}
                             {...register(`items.${index}.Quantity`, {
                               required: true,
                             })}
@@ -323,14 +338,16 @@ const InvoiceHome = () => {
                           />
                           <Input
                             type="number"
-                            className={cn("outline-none border rounded-md")}
+                            className={cn(
+                              "outline-none  rounded-md dark:bg-[#252945]"
+                            )}
                             {...register(`items.${index}.price`, {
                               required: true,
                             })}
                             placeholder="Price"
                             onChange={handlePriceChange(index)}
                           />
-                          <div className="border p-2 px-8 rounded-md">
+                          <div className="border p-2 px-8 rounded-md dark:bg-[#252945]">
                             <p>${getValues(`items.${index}.total`)}</p>
                           </div>
                           <Button
@@ -342,7 +359,7 @@ const InvoiceHome = () => {
                             <Image
                               src="/delete.svg"
                               height={20}
-                              width={100}
+                              width={120}
                               alt="delete"
                             />
                           </Button>
@@ -381,7 +398,7 @@ const InvoiceHome = () => {
                     </DrawerClose>
                     <div>
                       <Button
-                        // onClick={() => handleSaveAsDraft(getValues())}
+                        onClick={handleSaveAsDraft}
                         className="dark:bg-[#1E2139] dark:text-white hover:shadow-[2px_2px_0px_0px_rgba(0,0,0)] transition duration-300"
                       >
                         Save as draft
@@ -430,13 +447,13 @@ const InvoiceHome = () => {
                       size={"lg"}
                       variant={"outline"}
                       className={cn(
-                        "rounded-md text-sm font-semibold dark:bg-[#2B2736]",
+                        "rounded-md w-32 text-sm font-semibold dark:bg-[#2B2736]",
                         {
-                          "bg-[#F3FDF9] text-[#84E4B6]":
+                          "bg-[#F3FDF9] text-[#84E4B6] hover:text-[#84E4B6]":
                             invoice.status === "paid",
-                          "bg-[#FFF8F0] text-[#FF9F4D]":
+                          "bg-[#FFF8F0] text-[#FF9F4D] hover:text-[#FF9F4D]":
                             invoice.status === "pending",
-                          "bg-[#E0E0E0] text-[#757575]":
+                          "bg-[#E0E0E0] ":
                             invoice.status === "draft",
                         }
                       )}
