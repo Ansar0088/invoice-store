@@ -169,7 +169,7 @@ const UserPage = () => {
               {
                 "bg-[#F3FDF9] text-[#84E4B6]": invoice.status === "paid",
                 "bg-[#FFF8F0] text-[#FF9F4D]": invoice.status === "pending",
-                "bg-[#E0E0E0] text-[#757575]": invoice.status === "draft",
+                "bg-[#E0E0E0] text-white": invoice.status === "draft",
               }
             )}
           >
