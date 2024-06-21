@@ -149,17 +149,11 @@ const UserPage = () => {
 
   return (
     <div className="container mt-10">
-      <Link href="/invoice" className="ml-44 mb-3 flex items-center">
-        <Image
-          src="/left.svg"
-          height={30}
-          width={20}
-          alt="arrow"
-          className="arrow-animate ml-2 dark:bg-white"
-        />{" "}
+      <Link href="/invoice" className="ml-40 mb-3 flex items-center">
+      <Image src='/left.svg' height={30} width={20} alt="down" className="arrow-animate"/>
         <p className="underline ml-3">Go Back</p>
       </Link>
-      <div className="flex justify-between p-4 border w-[790px] mx-auto rounded-md bg-white dark:bg-[#1E2139] text-black text-sm font-bold mb-5">
+      <div className="flex justify-between p-4 w-[830px] mx-auto rounded-md bg-white dark:bg-[#1E2139] text-black text-sm font-bold mb-5">
         <div className="flex gap-3 items-center">
           <p className="dark:text-white">Status</p>
           <Button
@@ -183,7 +177,7 @@ const UserPage = () => {
         <div>
           <Button
             size={"lg"}
-            className="mr-2 text-black hover:bg-white bg-white hover:text-black"
+            className="mr-2 rounded-3xl text-black hover:bg-white bg-white hover:text-black"
             variant={"outline"}
             onClick={() => setIsDrawerOpen(true)}
           >
@@ -191,7 +185,7 @@ const UserPage = () => {
           </Button>
           <Dialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
             <DialogTrigger asChild>
-              <Button size={"lg"} variant="destructive">
+              <Button size={"lg"} variant="destructive" className="rounded-3xl">
                 Delete
               </Button>
             </DialogTrigger>
@@ -208,7 +202,10 @@ const UserPage = () => {
                 >
                   Cancel
                 </Button>
-                <Button variant="destructive" onClick={handleDelete}>
+                <Button
+                  variant="destructive"
+                  onClick={handleDelete}
+                >
                   Delete
                 </Button>
               </DialogFooter>
@@ -217,13 +214,13 @@ const UserPage = () => {
           <Button
             size={"lg"}
             onClick={() => markAsPaid(invoice.id)}
-            className="ml-2 border text-black hover:bg-white bg-white hover:text-black"
+            className="ml-2 border rounded-3xl text-black hover:bg-white bg-white hover:text-black"
           >
             Mark as paid
           </Button>
         </div>
       </div>
-      <div className="p-4 border w-[790px] mx-auto rounded-md bg-white dark:bg-[#1E2139] dark:text-white text-black text-lg font-semibold">
+      <div className="p-4 border w-[830px] mx-auto rounded-md bg-white dark:bg-[#1E2139] dark:text-white text-black text-lg font-semibold">
         <div className="flex justify-between px-3">
           <div>
             <p>Invoice ID</p>
@@ -270,7 +267,7 @@ const UserPage = () => {
         </div>
         <div className="flex items-center justify-between bg-[#373B53] text-white p-5">
           <p className="text-sm">Total Amount</p>
-          <p className="font-bold text-xl">${grandTotal.toFixed(2)}</p>
+          <p className="font-bold text-2xl">${grandTotal.toFixed(2)}</p>
         </div>
       </div>
       <Drawer

@@ -25,7 +25,8 @@ import { FormInputs } from "./types";
 
 const InvoiceHome = () => {
   const [invoices, setInvoices] = useState<FormInputs[]>([]);
-  const [isChecked, setIsChecked] = useState(false);
+  const [filteredInvoices, setFilteredInvoices] = useState<FormInputs[]>([]);
+  const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
 
   const {
     register,
@@ -45,9 +46,9 @@ const InvoiceHome = () => {
     control,
     name: "items",
   });
-  //  onsubmit add invoices logic
+
+  // onsubmit add invoices logic
   const onSubmit: SubmitHandler<FormInputs> = (formData) => {
-    getValues();
     const newInvoice: FormInputs = {
       ...formData,
       id: Date.now().toString(),
@@ -55,45 +56,35 @@ const InvoiceHome = () => {
     };
     const updatedInvoices = [...invoices, newInvoice];
     setInvoices(updatedInvoices);
+    setFilteredInvoices(updatedInvoices);
     localStorage.setItem("invoices", JSON.stringify(updatedInvoices));
   };
 
   const router = useRouter();
+
   // get invoices from localStorage
   useEffect(() => {
     const storedInvoices = localStorage.getItem("invoices");
     if (storedInvoices) {
-      setInvoices(JSON.parse(storedInvoices));
+      const parsedInvoices = JSON.parse(storedInvoices);
+      setInvoices(parsedInvoices);
+      setFilteredInvoices(parsedInvoices);
     }
   }, []);
-  // shorted by name logic
-  const handleCheckboxChange = (isChecked: any) => {
-    setIsChecked((prevState) => !prevState);
-    const sortedInvoices = [...invoices].sort((a, b) => {
-      if (isChecked) {
-        return a.ClientsName.localeCompare(b.ClientsName);
-      } else {
-        return b.ClientsName.localeCompare(a.ClientsName);
-      }
-    });
-    setInvoices(sortedInvoices);
-  };
-  // Filter by pending
-  const handleCheckboxPending = (isChecked: any) => {
-    setIsChecked((prevState) => !prevState);
-    const sortedInvoices = [...invoices].sort((a, b) => {
-      if (isChecked) {
-        return a.status.localeCompare(b.status);
-      } else {
-        return b.status.localeCompare(a.status);
-      }
-    });
-    setInvoices(sortedInvoices);
+
+  // Filter invoices by status
+  const handleCheckboxChange = (status: string) => {
+    setSelectedStatus(status);
+    if (status === selectedStatus) {
+      setSelectedStatus(null);
+      setFilteredInvoices(invoices);
+    } else {
+      setFilteredInvoices(invoices.filter((invoice) => invoice.status === status));
+    }
   };
 
-  console.log(isChecked);
   // fields Addition logic
-  const handleQuantityChange = (index: any) => (event: any) => {
+  const handleQuantityChange = (index: number) => (event: React.ChangeEvent<HTMLInputElement>) => {
     const quantity = parseFloat(event.target.value);
     const price = getValues(`items.${index}.price`);
     const total = quantity * price;
@@ -101,7 +92,7 @@ const InvoiceHome = () => {
     setValue(`items.${index}.total`, total);
   };
 
-  const handlePriceChange = (index: any) => (event: any) => {
+  const handlePriceChange = (index: number) => (event: React.ChangeEvent<HTMLInputElement>) => {
     const price = parseFloat(event.target.value);
     const quantity = getValues(`items.${index}.Quantity`);
     const total = quantity * price;
@@ -117,82 +108,72 @@ const InvoiceHome = () => {
     };
     const updatedInvoices = [...invoices, draftInvoice];
     setInvoices(updatedInvoices);
+    setFilteredInvoices(updatedInvoices);
     localStorage.setItem("invoices", JSON.stringify(updatedInvoices));
-    // alert("Invoice saved as draft");
   };
+
   return (
     <div className="container mt-10">
-      <div className="flex gap-5 justify-between items-center">
+      <div className="flex gap-5 justify-between items-center w-[880px] mx-auto">
         <div className="flex flex-col items-center">
           <p className="font-bold text-2xl">Invoices</p>
           <p className="text-xs text-slate-500 dark:text-gray-300">
-            There are {invoices.length} total invoices
+            There are {filteredInvoices.length} total invoices
           </p>
         </div>
         <div className="flex items-center gap-3 mr-5">
-          <p className="text-lg text-slate-700">
-            {/* Checkbox is {JSON.stringify(isChecked)} */}
-          </p>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button className="text-sm bg-blue-800 text-white px-4 py-2 rounded-md shadow-md hover:bg-blue-700 transition duration-300">
+              <Button variant={"outline"} className="text-sm border-none bg-transparent hover:bg-transparent">
                 Filter by status
+                <Image src='/down.svg' height={30} width={30} alt="down" className="pl-2"/>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-20 h-20 flex flex-col gap-1 text-center pl-6">
               <div className="flex gap-2 items-center">
                 <Checkbox
-                  id="Checkbox"
-                  checked={isChecked}
-                  onCheckedChange={handleCheckboxPending}
+                  id="pending"
+                  checked={selectedStatus === "pending"}
+                  onCheckedChange={() => handleCheckboxChange("pending")}
                 />
-                <label htmlFor="terms" className="text-sm font-medium">
-                  pending
-                </label>
-              </div>
-              <div className="flex gap-2 items-center ">
-                <Checkbox />
-                <label htmlFor="terms" className="text-sm font-medium">
-                  paid
+                <label htmlFor="pending" className="text-sm font-medium">
+                  Pending
                 </label>
               </div>
               <div className="flex gap-2 items-center">
-                <Checkbox />
-                <label htmlFor="terms" className="text-sm font-medium">
-                  draft
-                </label>
-              </div>
-            </DropdownMenuContent>
-          </DropdownMenu>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button className="text-sm bg-blue-800 text-white px-4 py-2 rounded-md shadow-md hover:bg-blue-700 transition duration-300">
-                Sort by Name
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-20 h-10 flex justify-center">
-              <div className="flex gap-2 items-center justify-betweenw-full">
                 <Checkbox
-                  id="sortCheckbox"
-                  checked={isChecked}
-                  onCheckedChange={handleCheckboxChange}
+                  id="paid"
+                  checked={selectedStatus === "paid"}
+                  onCheckedChange={() => handleCheckboxChange("paid")}
                 />
-                <label htmlFor="terms" className="text-sm font-medium">
-                  Name
+                <label htmlFor="paid" className="text-sm font-medium">
+                  Paid
+                </label>
+              </div>
+              <div className="flex gap-2 items-center">
+                <Checkbox
+                  id="draft"
+                  checked={selectedStatus === "draft"}
+                  onCheckedChange={() => handleCheckboxChange("draft")}
+                />
+                <label htmlFor="draft" className="text-sm font-medium">
+                  Draft
                 </label>
               </div>
             </DropdownMenuContent>
           </DropdownMenu>
+        
           <Drawer direction="left">
             <DrawerTrigger>
               <Button
+                size={"lg"}
                 variant={"secondary"}
-                className="hover:shadow-[4px_4px_0px_0px_rgba(0,0,0)] transition duration-400 bg-green-600   text-white hover:bg-green-600"
+                className="rounded-3xl bg-[#7C5DFA] text-sm font-semibold text-white hover:bg-[#7C5DFA]"
               >
                 <Image
                   src="/add.svg"
                   height={20}
-                  width={20}
+                  width={30}
                   alt="new"
                   className="mr-2"
                 />
@@ -219,7 +200,7 @@ const InvoiceHome = () => {
                     />
                     {errors.streetAddress && (
                       <p className="text-xs text-red-500 mt-1">
-                        streetaddress is required
+                        Street address is required
                       </p>
                     )}
                   </div>
@@ -227,7 +208,7 @@ const InvoiceHome = () => {
                     <div>
                       <p className="text-xs mb-1">City</p>
                       <Input
-                        placeholder="city"
+                        placeholder="City"
                         className={cn(
                           "outline-none border rounded-md dark:bg-[#252945]",
                           errors.city ? "border-red-500" : "border-slate-300"
@@ -243,7 +224,7 @@ const InvoiceHome = () => {
                     <div>
                       <p className="text-xs mb-1">Post Code</p>
                       <Input
-                        placeholder="post code"
+                        placeholder="Post Code"
                         className={cn(
                           "outline-none border rounded-md dark:bg-[#252945]",
                           errors.postCode
@@ -261,7 +242,7 @@ const InvoiceHome = () => {
                     <div>
                       <p className="text-xs mb-1">Country</p>
                       <Input
-                        placeholder="country"
+                        placeholder="Country"
                         className={cn(
                           "outline-none border rounded-md dark:bg-[#252945]",
                           errors.country ? "border-red-500" : "border-slate-300"
@@ -279,7 +260,7 @@ const InvoiceHome = () => {
                     <p className="text-sm font-bold mb-4">Bill To</p>
                     <p className="text-xs font-normal mb-1">Clients Name</p>
                     <Input
-                      placeholder="clientsname"
+                      placeholder="Client's Name"
                       className={cn(
                         "outline-none border rounded-md dark:bg-[#252945]",
                         errors.ClientsName
@@ -294,10 +275,10 @@ const InvoiceHome = () => {
                       </span>
                     )}
                     <p className="text-xs font-normal mb-1 mt-3">
-                      Clients Email
+                      Client Email
                     </p>
                     <Input
-                      placeholder="clientsemail"
+                      placeholder="Client's Email"
                       className={cn(
                         "outline-none  rounded-md dark:bg-[#252945]",
                         errors.ClientsEmail
@@ -417,73 +398,72 @@ const InvoiceHome = () => {
           </Drawer>
         </div>
       </div>
-      {invoices.length > 0 ? (
-        <>
-          <h2 className="font-bold m-6 my-3">Invoice List</h2>
-          <ScrollArea className="h-[480px] rounded-md px-5 mt-10">
-            <Reorder.Group
-              axis="y"
-              values={invoices}
-              onReorder={setInvoices}
-              className="space-y-4"
-            >
-              {invoices.map((invoice) => (
-                <Reorder.Item
-                  key={invoice.id}
-                  value={invoice}
-                  className="w-[950px] hover:border-blue-700 mx-auto p-7 flex text-sm justify-between items-center border rounded-lg cursor-pointer bg-white dark:bg-[#1E2139] font-bold"
-                  onClick={() => router.push(`/invoice/${invoice.id}`)}
-                >
-                  <div className="flex gap-5 items-center">
-                    <p className="">#{invoice.id}</p>
-                    <p className="text-gray-400 text-xs">
-                      {invoice.ClientsName}
-                    </p>
-                    <p className="text-gray-400 text-xs">{invoice.city}</p>
-                  </div>
-                  <div className="flex gap-5 items-center">
-                    <p>{invoice.postCode}</p>
-                    <Button
-                      size={"lg"}
-                      variant={"outline"}
-                      className={cn(
-                        "rounded-md w-32 text-sm font-semibold dark:bg-[#2B2736]",
-                        {
-                          "bg-[#F3FDF9] text-[#84E4B6] hover:text-[#84E4B6]":
-                            invoice.status === "paid",
-                          "bg-[#FFF8F0] text-[#FF9F4D] hover:text-[#FF9F4D]":
-                            invoice.status === "pending",
-                          "bg-[#E0E0E0] ":
-                            invoice.status === "draft",
-                        }
-                      )}
-                    >
-                      {invoice.status
-                        ? `${invoice.status
-                            .charAt(0)
-                            .toUpperCase()}${invoice.status.slice(1)}`
-                        : "Pending"}
-                    </Button>
-                  </div>
-                </Reorder.Item>
-              ))}
-            </Reorder.Group>
-          </ScrollArea>
-        </>
-      ) : (
-        <>
-          <div className="flex justify-center mt-20">
-            <Image src="/inbg.svg" height={100} width={300} alt="no-invoices" />
-          </div>
-          <div className="text-center mt-5">
-            <p className="text-lg font-semibold">There is nothing here</p>
-            <p className="text-xs text-gray-400 mt-2">
-              Create an invoice by clicking the New <br />
-              Invoice button and get started
-            </p>
-          </div>
-        </>
-      )}
+      <div className="w-[880px] mx-auto">
+        {filteredInvoices.length > 0 ? (
+          <>
+            <h2 className="font-bold m-6 my-3">Invoice List</h2>
+            <ScrollArea className="h-[480px] rounded-md px-5 mt-10">
+              <Reorder.Group
+                axis="y"
+                values={filteredInvoices}
+                onReorder={setFilteredInvoices}
+                className="space-y-4"
+              >
+                {filteredInvoices.map((invoice) => (
+                  <Reorder.Item
+                    key={invoice.id}
+                    value={invoice}
+                    className="hover:border-blue-700 mx-auto p-7 flex text-sm justify-between items-center border rounded-lg cursor-pointer bg-white dark:bg-[#1E2139] font-bold"
+                    onClick={() => router.push(`/invoice/${invoice.id}`)}
+                  >
+                    <div className="flex gap-5 items-center">
+                      <p className="">#{invoice.id}</p>
+                      <p className="text-gray-400 text-xs">
+                        {invoice.ClientsName}
+                      </p>
+                      <p className="text-gray-400 text-xs">{invoice.city}</p>
+                    </div>
+                    <div className="flex gap-5 items-center">
+                      <p>{invoice.postCode}</p>
+                      <Button
+                        size="lg"
+                        variant="outline"
+                        className={cn(
+                          "rounded-md w-32 text-sm font-semibold dark:bg-[#2B2736]",
+                          {
+                            "bg-[#F3FDF9] text-[#84E4B6] hover:text-[#84E4B6]":
+                              invoice.status === "paid",
+                            "bg-[#FFF8F0] text-[#FF9F4D] hover:text-[#FF9F4D]":
+                              invoice.status === "pending",
+                            "bg-[#E0E0E0]": invoice.status === "draft",
+                          }
+                        )}
+                      >
+                        {invoice.status
+                          ? `${invoice.status.charAt(0).toUpperCase()}${invoice.status.slice(1)}`
+                          : "Pending"}
+                      </Button>
+                    </div>
+                  </Reorder.Item>
+                ))}
+              </Reorder.Group>
+            </ScrollArea>
+          </>
+        ) : (
+          <>
+            <div className="flex justify-center mt-20">
+              <Image src="/inbg.svg" height={100} width={300} alt="no-invoices" />
+            </div>
+            <div className="text-center mt-5">
+              <p className="text-lg font-semibold">There is nothing here</p>
+              <p className="text-xs text-gray-400 mt-2">
+                Create an invoice by clicking the New <br />
+                Invoice button and get started
+              </p>
+            </div>
+          </>
+        )}
+      </div>
     </div>
   );
 };

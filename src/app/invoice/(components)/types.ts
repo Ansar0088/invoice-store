@@ -3,7 +3,7 @@ export type FormInputs = {
   id: string;
   streetAddress: string;
   city: string;
-  postCode: string;
+  postCode: number;
   country: string;
   ClientsName: string;
   ClientsEmail: string;
