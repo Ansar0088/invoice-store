@@ -24,9 +24,13 @@ import { cn } from "@/lib/utils";
 import Image from "next/image";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { FormInputs } from "../(components)/types";
+import { Calendar } from "@/components/ui/calendar";
+import { format } from "date-fns";
 
 const UserPage = () => {
   const [invoice, setInvoice] = useState<FormInputs | null>(null);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const router = useRouter();
   const { usersId } = useParams();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -47,7 +51,7 @@ const UserPage = () => {
     control,
     name: "items",
   });
-  //  Get invoices from localStorag
+
   useEffect(() => {
     if (usersId) {
       const storedInvoices = localStorage.getItem("invoices");
@@ -63,6 +67,9 @@ const UserPage = () => {
             setValue("country", foundInvoice.country);
             setValue("ClientsName", foundInvoice.ClientsName);
             setValue("ClientsEmail", foundInvoice.ClientsEmail);
+            if (foundInvoice.date) {
+              setSelectedDate(new Date(foundInvoice.date));
+            }
             foundInvoice.items.forEach((item: any, index: any) => {
               append(item);
             });
@@ -73,7 +80,7 @@ const UserPage = () => {
       }
     }
   }, [usersId, setValue, append]);
-  // Delete invoices logic
+
   const handleDelete = () => {
     if (invoice) {
       const storedInvoices = localStorage.getItem("invoices");
@@ -87,11 +94,12 @@ const UserPage = () => {
       }
     }
   };
-  // Edit invoices logic
+
   const handleEditSave: SubmitHandler<FormInputs> = (formData) => {
     const updatedInvoice = {
       ...formData,
       id: invoice?.id || Date.now().toString(),
+      date: selectedDate, // Include selected date in the updated invoice
     };
     const storedInvoices = localStorage.getItem("invoices");
     if (storedInvoices) {
@@ -105,10 +113,25 @@ const UserPage = () => {
     }
   };
 
+  const toggleCalendar = () => {
+    setIsCalendarOpen(!isCalendarOpen);
+  };
+
+  const handleDateSelect = (date: Date | undefined) => {
+    if (date) {
+      setSelectedDate(date);
+    }
+    setIsCalendarOpen(false);
+  };
+
+  const isValidDate = (date: Date | null) => {
+    return date instanceof Date && !isNaN(date.getTime());
+  };
+
   if (!invoice) {
     return <div className="container mt-10">Loading....</div>;
   }
-  // inputs addition logic
+
   const handleQuantityChange = (index: any) => (event: any) => {
     const quantity = parseFloat(event.target.value);
     const price = getValues(`items.${index}.price`);
@@ -124,9 +147,10 @@ const UserPage = () => {
     setValue(`items.${index}.price`, price);
     setValue(`items.${index}.total`, total);
   };
+
   const items = watch("items");
   const grandTotal = items.reduce((acc, item) => acc + item.total, 0);
-  //  update by status
+
   const markAsPaid = (invoiceId: string) => {
     const storedInvoices = localStorage.getItem("invoices");
     if (storedInvoices) {
@@ -150,7 +174,13 @@ const UserPage = () => {
   return (
     <div className="container mt-10">
       <Link href="/invoice" className="ml-40 mb-3 flex items-center">
-      <Image src='/left.svg' height={30} width={20} alt="down" className="arrow-animate"/>
+        <Image
+          src="/left.svg"
+          height={30}
+          width={20}
+          alt="down"
+          className="arrow-animate"
+        />
         <p className="underline ml-3">Go Back</p>
       </Link>
       <div className="flex justify-between p-4 w-[830px] mx-auto rounded-md bg-white dark:bg-[#1E2139] text-black text-sm font-bold mb-5">
@@ -192,6 +222,7 @@ const UserPage = () => {
             <DialogContent className="sm:max-w-[425px]">
               <DialogHeader>
                 <DialogDescription>
+                  <p className="text-2xl text-black dark:text-white font-semibold">Confirm Deletion</p>
                   Are you sure you want to delete this invoice?
                 </DialogDescription>
               </DialogHeader>
@@ -202,10 +233,7 @@ const UserPage = () => {
                 >
                   Cancel
                 </Button>
-                <Button
-                  variant="destructive"
-                  onClick={handleDelete}
-                >
+                <Button variant="destructive" onClick={handleDelete}>
                   Delete
                 </Button>
               </DialogFooter>
@@ -229,6 +257,12 @@ const UserPage = () => {
             <p className="text-gray-400 text-xs">{invoice.ClientsName}</p>
             <p className=" mt-2">Post Code</p>
             <p className="text-gray-400 text-xs">{invoice.postCode}</p>
+            <p className=" mt-2">Invoice date</p>
+            <p className="text-gray-400 text-xs">
+                {isValidDate(selectedDate)
+                  ? format(selectedDate, "dd-MM-yyyy")
+                  : "No Date Selected"}
+              </p>
           </div>
           <div>
             <p className="text-black dark:text-white">Email & Address</p>
@@ -369,6 +403,41 @@ const UserPage = () => {
                     This field is required
                   </span>
                 )}
+                <div className="relative mt-5">
+                  <p className="text-xs font-semibold mt-3">Invoice Date</p>
+                  <Button
+                    type="button"
+                    variant={"outline"}
+                    onClick={toggleCalendar}
+                    className="w-full mt-2 flex justify-between font-normal dark:bg-[#252945]"
+                  >
+                    <Image
+                      src="/calendar.svg"
+                      height={40}
+                      width={40}
+                      alt="calendar"
+                      className="absolute right-0"
+                    />
+                    {isValidDate(selectedDate)
+                      ? format(selectedDate as Date, "PPP")
+                      : "Select Date"}
+                  </Button>
+
+                  {isCalendarOpen && (
+                    <div className="absolute z-10 dark:bg-[#252945] rounded-xl border bg-white">
+                      <Calendar
+                        className="z-10"
+                        mode="single"
+                        selected={selectedDate}
+                        onSelect={handleDateSelect}
+                        disabled={(date) =>
+                          date > new Date() || date < new Date("1900-01-01")
+                        }
+                        initialFocus
+                      />
+                    </div>
+                  )}
+                </div>
                 <div className="mt-5">
                   <p className="font-bold">Items List</p>
                   {fields.map((field, index) => (

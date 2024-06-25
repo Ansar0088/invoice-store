@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useTheme } from "next-themes";
 import { Separator } from "@/components/ui/separator";
 
-const sideheader = () => {
+const Sideheader = () => {
     // eslint-disable-next-line react-hooks/rules-of-hooks
   const [mounted, setMounted] = useState(false);
   const { theme, setTheme } = useTheme();
@@ -15,21 +15,21 @@ const sideheader = () => {
     setTheme(theme === "dark" ? "light" : "dark");
   };
   return (
-    <div className="bg-[#7777bd] relative h-full p-3 flex flex-col items-center justify-between rounded-tr-3xl rounded-br-3xl">
+    <div className="bg-[#373B53] relative h-full w-28 flex flex-col items-center justify-between rounded-tr-3xl rounded-br-3xl">
       <div>
         <Image
-          src="/invoice.png"
-          width={120}
+          src="/side.png"
+          width={110}
           height={100}
           alt="logo"
-          className="rounded-full mt-5"
+          className=""
         />
       </div>
       <div className=" h-40 flex flex-col justify-between items-center w-full">
         <Button
           variant="outline"
           size="icon"
-          className="mt-10 relative"
+          className="mt-5 relative"
           onClick={toggleTheme}
         >
           {theme === "dark" ? (
@@ -51,15 +51,15 @@ const sideheader = () => {
         </Button>
         <Separator className=" w-full right-0 mx-0" />
         <Image
-          src="/avtr.jpg"
+          src="/man.jpg"
           width={40}
           height={100}
           alt="logo"
-          className="rounded-full"
+          className="rounded-full mb-5"
         />
       </div>
     </div>
   );
 };
 
-export default sideheader;
+export default Sideheader;

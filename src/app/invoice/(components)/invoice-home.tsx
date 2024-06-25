@@ -22,17 +22,22 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Checkbox } from "@/components/ui/checkbox";
 import { FormInputs } from "./types";
+import { Calendar } from "@/components/ui/calendar";
+import { format } from "date-fns";
 
 const InvoiceHome = () => {
   const [invoices, setInvoices] = useState<FormInputs[]>([]);
   const [filteredInvoices, setFilteredInvoices] = useState<FormInputs[]>([]);
   const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
   const {
     register,
     handleSubmit,
     control,
     setValue,
+    watch,
     getValues,
     formState: { errors },
   } = useForm<FormInputs>({
@@ -47,12 +52,20 @@ const InvoiceHome = () => {
     name: "items",
   });
 
-  // onsubmit add invoices logic
+  const toggleCalendar = () => {
+    setIsCalendarOpen(!isCalendarOpen);
+  };
+
+  const handleDateSelect = (date: Date | undefined) => {
+    setSelectedDate(date);
+  };
+
   const onSubmit: SubmitHandler<FormInputs> = (formData) => {
     const newInvoice: FormInputs = {
       ...formData,
       id: Date.now().toString(),
       status: "pending",
+      date: selectedDate ? selectedDate.getTime() : 0,
     };
     const updatedInvoices = [...invoices, newInvoice];
     setInvoices(updatedInvoices);
@@ -61,7 +74,6 @@ const InvoiceHome = () => {
   };
 
   const router = useRouter();
-
   // get invoices from localStorage
   useEffect(() => {
     const storedInvoices = localStorage.getItem("invoices");
@@ -71,45 +83,53 @@ const InvoiceHome = () => {
       setFilteredInvoices(parsedInvoices);
     }
   }, []);
-
   // Filter invoices by status
+
   const handleCheckboxChange = (status: string) => {
     setSelectedStatus(status);
     if (status === selectedStatus) {
       setSelectedStatus(null);
       setFilteredInvoices(invoices);
     } else {
-      setFilteredInvoices(invoices.filter((invoice) => invoice.status === status));
+      setFilteredInvoices(
+        invoices.filter((invoice) => invoice.status === status)
+      );
     }
   };
-
   // fields Addition logic
-  const handleQuantityChange = (index: number) => (event: React.ChangeEvent<HTMLInputElement>) => {
-    const quantity = parseFloat(event.target.value);
-    const price = getValues(`items.${index}.price`);
-    const total = quantity * price;
-    setValue(`items.${index}.Quantity`, quantity);
-    setValue(`items.${index}.total`, total);
-  };
+  const handleQuantityChange =
+    (index: number) => (event: React.ChangeEvent<HTMLInputElement>) => {
+      const quantity = parseFloat(event.target.value);
+      const price = getValues(`items.${index}.price`);
+      const total = quantity * price;
+      setValue(`items.${index}.Quantity`, quantity);
+      setValue(`items.${index}.total`, total);
+    };
 
-  const handlePriceChange = (index: number) => (event: React.ChangeEvent<HTMLInputElement>) => {
-    const price = parseFloat(event.target.value);
-    const quantity = getValues(`items.${index}.Quantity`);
-    const total = quantity * price;
-    setValue(`items.${index}.price`, price);
-    setValue(`items.${index}.total`, total);
-  };
+  const handlePriceChange =
+    (index: number) => (event: React.ChangeEvent<HTMLInputElement>) => {
+      const price = parseFloat(event.target.value);
+      const quantity = getValues(`items.${index}.Quantity`);
+      const total = quantity * price;
+      setValue(`items.${index}.price`, price);
+      setValue(`items.${index}.total`, total);
+    };
 
   const handleSaveAsDraft = () => {
     const draftInvoice = {
       ...getValues(),
       id: Date.now().toString(),
       status: "draft",
+      date: selectedDate ? selectedDate.getTime() : 0,
     };
     const updatedInvoices = [...invoices, draftInvoice];
     setInvoices(updatedInvoices);
     setFilteredInvoices(updatedInvoices);
     localStorage.setItem("invoices", JSON.stringify(updatedInvoices));
+  };
+
+  const isValidDate = (date: Date | undefined) => {
+    return date instanceof Date && !isNaN(date.getTime());
   };
 
   return (
@@ -124,9 +144,18 @@ const InvoiceHome = () => {
         <div className="flex items-center gap-3 mr-5">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant={"outline"} className="text-sm border-none bg-transparent hover:bg-transparent">
+              <Button
+                variant={"outline"}
+                className="text-sm border-none bg-transparent hover:bg-transparent"
+              >
                 Filter by status
-                <Image src='/down.svg' height={30} width={30} alt="down" className="pl-2"/>
+                <Image
+                  src="/down.svg"
+                  height={30}
+                  width={30}
+                  alt="down"
+                  className="pl-2"
+                />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-20 h-20 flex flex-col gap-1 text-center pl-6">
@@ -162,13 +191,13 @@ const InvoiceHome = () => {
               </div>
             </DropdownMenuContent>
           </DropdownMenu>
-        
+
           <Drawer direction="left">
             <DrawerTrigger>
               <Button
-                size={"lg"}
+                size={"sm"}
                 variant={"secondary"}
-                className="rounded-3xl bg-[#7C5DFA] text-sm font-semibold text-white hover:bg-[#7C5DFA]"
+                className="rounded-full bg-[#7C5DFA] h-10 px-2  font-bold flex justify-between text-xs text-white hover:bg-[#7C5DFA]"
               >
                 <Image
                   src="/add.svg"
@@ -256,6 +285,41 @@ const InvoiceHome = () => {
                       )}
                     </div>
                   </div>
+                  <div className="relative">
+                    <p className="text-xs font-semibold mt-3">Invoice Date</p>
+                    <Button
+                      type="button"
+                      variant={"outline"}
+                      onClick={toggleCalendar}
+                      className="w-full mt-2 flex justify-between font-normal dark:bg-[#252945]"
+                    >
+                      <Image
+                        src="/calendar.svg"
+                        height={40}
+                        width={40}
+                        alt="calendar"
+                        className="absolute right-0"
+                      />
+                      {isValidDate(selectedDate)
+                        ? format(selectedDate as Date, "dd-MM-yyyy")
+                        : "Select Date"}
+                    </Button>
+
+                    {isCalendarOpen && (
+                      <div className="absolute z-10 dark:bg-[#252945] rounded-xl border bg-white">
+                        <Calendar
+                          className="z-10"
+                          mode="single"
+                          selected={selectedDate ?? undefined}
+                          onSelect={handleDateSelect}
+                          disabled={(date) =>
+                            date > new Date() || date < new Date("1900-01-01")
+                          }
+                          initialFocus
+                        />
+                      </div>
+                    )}
+                  </div>
                   <div className="mt-5">
                     <p className="text-sm font-bold mb-4">Bill To</p>
                     <p className="text-xs font-normal mb-1">Clients Name</p>
@@ -280,16 +344,23 @@ const InvoiceHome = () => {
                     <Input
                       placeholder="Client's Email"
                       className={cn(
-                        "outline-none  rounded-md dark:bg-[#252945]",
+                        "outline-none rounded-md dark:bg-[#252945]",
                         errors.ClientsEmail
                           ? "border-red-500"
                           : "border-slate-300"
                       )}
-                      {...register("ClientsEmail", { required: true })}
+                      {...register("ClientsEmail", {
+                        required: "This field is required",
+                        pattern: {
+                          value:
+                            /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                          message: "Invalid email address",
+                        },
+                      })}
                     />
                     {errors.ClientsEmail && (
                       <span className="text-red-500 text-xs">
-                        This field is required
+                        {errors.ClientsEmail.message}
                       </span>
                     )}
                     <div className="mt-5">
@@ -348,6 +419,7 @@ const InvoiceHome = () => {
                       ))}
                     </div>
                     <Button
+                      type="button"
                       onClick={() =>
                         append({
                           ItemName: "",
@@ -384,12 +456,14 @@ const InvoiceHome = () => {
                       >
                         Save as draft
                       </Button>
-                      <Button
-                        type="submit"
-                        className="ml-2 dark:bg-[#1E2139] dark:text-white hover:shadow-[2px_2px_0px_0px_rgba(0,0,0)] transition duration-300"
-                      >
-                        Save & send
-                      </Button>
+                      <DrawerClose>
+                        <Button
+                          type="submit"
+                          className="ml-2 dark:bg-[#1E2139] dark:text-white hover:shadow-[2px_2px_0px_0px_rgba(0,0,0)] transition duration-300"
+                        >
+                          Save & send
+                        </Button>
+                      </DrawerClose>
                     </div>
                   </div>
                 </DrawerFooter>
@@ -409,50 +483,70 @@ const InvoiceHome = () => {
                 onReorder={setFilteredInvoices}
                 className="space-y-4"
               >
-                {filteredInvoices.map((invoice) => (
-                  <Reorder.Item
-                    key={invoice.id}
-                    value={invoice}
-                    className="hover:border-blue-700 mx-auto p-7 flex text-sm justify-between items-center border rounded-lg cursor-pointer bg-white dark:bg-[#1E2139] font-bold"
-                    onClick={() => router.push(`/invoice/${invoice.id}`)}
-                  >
-                    <div className="flex gap-5 items-center">
-                      <p className="">#{invoice.id}</p>
-                      <p className="text-gray-400 text-xs">
-                        {invoice.ClientsName}
-                      </p>
-                      <p className="text-gray-400 text-xs">{invoice.city}</p>
-                    </div>
-                    <div className="flex gap-5 items-center">
-                      <p>{invoice.postCode}</p>
-                      <Button
-                        size="lg"
-                        variant="outline"
-                        className={cn(
-                          "rounded-md w-32 text-sm font-semibold dark:bg-[#2B2736]",
-                          {
-                            "bg-[#F3FDF9] text-[#84E4B6] hover:text-[#84E4B6]":
-                              invoice.status === "paid",
-                            "bg-[#FFF8F0] text-[#FF9F4D] hover:text-[#FF9F4D]":
-                              invoice.status === "pending",
-                            "bg-[#E0E0E0]": invoice.status === "draft",
-                          }
-                        )}
-                      >
-                        {invoice.status
-                          ? `${invoice.status.charAt(0).toUpperCase()}${invoice.status.slice(1)}`
-                          : "Pending"}
-                      </Button>
-                    </div>
-                  </Reorder.Item>
-                ))}
+                {filteredInvoices.map((invoice) => {
+                  const grandTotal = invoice.items.reduce(
+                    (acc, item) => acc + item.total,
+                    0
+                  );
+
+                  return (
+                    <Reorder.Item
+                      key={invoice.id}
+                      value={invoice}
+                      className="hover:border-blue-700 mx-auto p-7 flex text-sm justify-between items-center border rounded-lg cursor-pointer bg-white dark:bg-[#1E2139] font-bold"
+                      onClick={() => router.push(`/invoice/${invoice.id}`)}
+                    >
+                      <div className="flex gap-5 items-center">
+                        <p className="">#{invoice.id}</p>
+                        <p className="text-gray-400 text-xs">
+                          {invoice.ClientsName}
+                        </p>
+                        <p className="text-gray-400 text-xs">
+                          {isValidDate(new Date(invoice.date))
+                            ? format(new Date(invoice.date), "dd-MM-yyyy")
+                            : "No Date Selected"}
+                        </p>
+                      </div>
+                      <div className="flex gap-5 items-center">
+                        <p className="font-bold text-2xl">
+                          ${grandTotal.toFixed(2)}
+                        </p>
+                        <Button
+                          size="lg"
+                          variant="outline"
+                          className={cn(
+                            "rounded-md w-32 text-sm font-semibold dark:bg-[#2B2736] relative",
+                            {
+                              "bg-[#F3FDF9] text-[#84E4B6] hover:text-[#84E4B6]":
+                                invoice.status === "paid",
+                              "bg-[#FFF8F0] text-[#FF9F4D] hover:text-[#FF9F4D]":
+                                invoice.status === "pending",
+                              "bg-[#E0E0E0]": invoice.status === "draft",
+                            }
+                          )}
+                        >
+                          {invoice.status
+                            ? `${invoice.status
+                                .charAt(0)
+                                .toUpperCase()}${invoice.status.slice(1)}`
+                            : "Pending"}
+                        </Button>
+                      </div>
+                    </Reorder.Item>
+                  );
+                })}
               </Reorder.Group>
             </ScrollArea>
           </>
         ) : (
           <>
             <div className="flex justify-center mt-20">
-              <Image src="/inbg.svg" height={100} width={300} alt="no-invoices" />
+              <Image
+                src="/inbg.svg"
+                height={100}
+                width={300}
+                alt="no-invoices"
+              />
             </div>
             <div className="text-center mt-5">
               <p className="text-lg font-semibold">There is nothing here</p>

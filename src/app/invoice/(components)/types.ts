@@ -7,6 +7,7 @@ export type FormInputs = {
   country: string;
   ClientsName: string;
   ClientsEmail: string;
+  date: string | number; 
   items: {
     ItemName: string;
     Quantity: number;
