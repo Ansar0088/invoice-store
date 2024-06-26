@@ -29,23 +29,23 @@ const Sideheader = () => {
         <Button
           variant="outline"
           size="icon"
-          className="mt-5 relative"
+          className="mt-5 relative bg-transparent border-none hover:bg-transparent"
           onClick={toggleTheme}
         >
           {theme === "dark" ? (
             <Image
               src="/dark.svg"
               height={50}
-              width={20}
+              width={25}
               alt="Switch to light mode"
             />
           ) : (
             <Image
               src="/light.svg"
               height={50}
-              width={20}
+              width={25}
               alt="Switch to dark mode"
-              className="text-white"
+              className="text-gray-500"
             />
           )}
         </Button>

@@ -9,6 +9,7 @@ export type FormInputs = {
   ClientsEmail: string;
   date: string | number; 
   items: {
+    id?: string;
     ItemName: string;
     Quantity: number;
     price: number;

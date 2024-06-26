@@ -133,11 +133,11 @@ const InvoiceHome = () => {
   };
 
   return (
-    <div className="container mt-10">
-      <div className="flex gap-5 justify-between items-center w-[880px] mx-auto">
+    <div className="container mt-20">
+      <div className="flex justify-between items-center w-[750px] mx-auto">
         <div className="flex flex-col items-center">
-          <p className="font-bold text-2xl">Invoices</p>
-          <p className="text-xs text-slate-500 dark:text-gray-300">
+          <p className="mr-3 text-3xl font-bold font-Ubantu-Bold" >Invoices</p>
+          <p className="text-sm  ml-5 mt-1 text-slate-500 dark:text-gray-300">
             There are {filteredInvoices.length} total invoices
           </p>
         </div>
@@ -195,14 +195,14 @@ const InvoiceHome = () => {
           <Drawer direction="left">
             <DrawerTrigger>
               <Button
-                size={"sm"}
+                size={"lg"}
                 variant={"secondary"}
-                className="rounded-full bg-[#7C5DFA] h-10 px-2  font-bold flex justify-between text-xs text-white hover:bg-[#7C5DFA]"
+                className="rounded-full bg-[#7C5DFA] p-6 w-32 font-bold text-sm text-white hover:bg-[#7C5DFA]"
               >
                 <Image
                   src="/add.svg"
-                  height={20}
-                  width={30}
+                  height={30}
+                  width={100}
                   alt="new"
                   className="mr-2"
                 />
@@ -429,10 +429,10 @@ const InvoiceHome = () => {
                         })
                       }
                       size={"sm"}
-                      className="mr-2 dark:bg-[#1E2139] dark:text-white text-sm"
-                    >
+                      className="mr-2 text-sm text-[#9277FF] hover:text-black w-96 bg-transparent mt-3 px-5 rounded-full"
+                      >
                       <Image
-                        src="/add.svg"
+                        src="/plus.svg"
                         height={20}
                         width={20}
                         alt="add"
@@ -445,22 +445,23 @@ const InvoiceHome = () => {
                 <DrawerFooter>
                   <div className="flex justify-between w-full">
                     <DrawerClose>
-                      <Button className="  dark:bg-[#1E2139] dark:text-white hover:shadow-[2px_2px_0px_0px_rgba(0,0,0)] transition duration-300">
+                      <Button 
+                        className="w-32 p-6 bg-[#F9FAFE] hover:bg-[#F9FAFE]  rounded-full">
                         Discard
                       </Button>
                     </DrawerClose>
                     <div>
                       <Button
                         onClick={handleSaveAsDraft}
-                        className="dark:bg-[#1E2139] dark:text-white hover:shadow-[2px_2px_0px_0px_rgba(0,0,0)] transition duration-300"
+                        className="w-32 p-6 bg-[#1E2139] hover:bg-[#1E2139] dark:text-white rounded-full"
                       >
                         Save as draft
                       </Button>
                       <DrawerClose>
                         <Button
                           type="submit"
-                          className="ml-2 dark:bg-[#1E2139] dark:text-white hover:shadow-[2px_2px_0px_0px_rgba(0,0,0)] transition duration-300"
-                        >
+                          className="ml-2 w-32 p-6 bg-[#7C5DFA] hover:bg-[#7C5DFA] dark:text-white rounded-full"
+                          >
                           Save & send
                         </Button>
                       </DrawerClose>
@@ -472,10 +473,9 @@ const InvoiceHome = () => {
           </Drawer>
         </div>
       </div>
-      <div className="w-[880px] mx-auto">
+      <div className="w-[750px] mx-auto">
         {filteredInvoices.length > 0 ? (
           <>
-            <h2 className="font-bold m-6 my-3">Invoice List</h2>
             <ScrollArea className="h-[480px] rounded-md px-5 mt-10">
               <Reorder.Group
                 axis="y"

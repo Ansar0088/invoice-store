@@ -85,3 +85,51 @@
     margin-left: 5px;
     animation: slide 1s infinite alternate ease-in-out;
   }
+
+  .responsive-icon {
+    display: none;
+  }
+  
+  @media (min-width: 700px) {
+    .responsive-icon {
+      display: inline;
+    }
+  }
+  
+  .responsive-text {
+    display: none;
+  }
+  
+  @media (min-width: 700px) {
+    .responsive-text {
+      display: inline;
+    }
+  }
+
+  @font-face {
+    font-family: 'Ubuntu-BoldItalic';
+    src: url('../assets/ubantu-font/Ubuntu-BoldItalic.ttf') format('truetype');
+    font-weight:300;
+    font-style: normal;
+  }
+  @font-face {
+    font-family: 'Ubantu-Medium';
+    src: url('../assets//ubantu-font/Ubuntu-Medium.ttf') format('truetype');
+    font-weight:500;
+    font-style: normal;
+  }
+  @font-face {
+    font-family: 'Ubantu-Regular';
+    src: url('../assets/ubantu-font/Ubuntu-Regular.ttf') format('truetype');
+    font-weight:100;
+    font-style: normal;
+  }
+  @font-face {
+    font-family: 'Ubantu-Bold';
+    src: url('../assets/ubantu-font/Ubuntu-Bold.ttf') format('truetype');
+    font-weight:700;
+    font-style: normal;
+  }
+  body {
+    font-family: "Ubuntu";
+  }  

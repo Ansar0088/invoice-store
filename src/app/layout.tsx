@@ -1,10 +1,9 @@
-import { Inter } from "next/font/google";
+import { League_Spartan } from "next/font/google";
 import "./globals.css";
 import SideHeader from "./invoice/(components)/side-header";
 import { ThemeProvider } from "./invoice/(components)/theme-provider";
 import Head from "next/head";
-
-const inter = Inter({ subsets: ["latin"] });
+const Spartan = League_Spartan({ subsets: ["latin"] });
 
 export default function RootLayout({
   children,
@@ -16,7 +15,7 @@ export default function RootLayout({
       <Head>
         <link rel="icon" href="/favicon.ico" sizes="any" />
       </Head>
-      <body className={inter.className}>
+      <body className={Spartan.className}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

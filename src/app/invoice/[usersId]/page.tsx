@@ -60,7 +60,7 @@ const UserPage = () => {
           const invoices = JSON.parse(storedInvoices);
           const foundInvoice = invoices.find((inv: any) => inv.id === usersId);
           if (foundInvoice) {
-            setInvoice(foundInvoice);
+            setInvoice(foundInvoice);       
             setValue("streetAddress", foundInvoice.streetAddress);
             setValue("city", foundInvoice.city);
             setValue("postCode", foundInvoice.postCode);
@@ -70,9 +70,8 @@ const UserPage = () => {
             if (foundInvoice.date) {
               setSelectedDate(new Date(foundInvoice.date));
             }
-            foundInvoice.items.forEach((item: any, index: any) => {
-              append(item);
-            });
+            setValue('items',foundInvoice.items)
+         
           }
         } catch (error) {
           console.error("Error parsing invoices from local storage:", error);
@@ -96,10 +95,10 @@ const UserPage = () => {
   };
 
   const handleEditSave: SubmitHandler<FormInputs> = (formData) => {
-    const updatedInvoice = {
+    const updatedInvoice : any = {
       ...formData,
       id: invoice?.id || Date.now().toString(),
-      date: selectedDate, // Include selected date in the updated invoice
+      date: selectedDate,
     };
     const storedInvoices = localStorage.getItem("invoices");
     if (storedInvoices) {
@@ -173,7 +172,7 @@ const UserPage = () => {
 
   return (
     <div className="container mt-10">
-      <Link href="/invoice" className="ml-40 mb-3 flex items-center">
+      <Link href="/invoice" className="pl-48 mb-3 flex items-center">
         <Image
           src="/left.svg"
           height={30}
@@ -183,7 +182,7 @@ const UserPage = () => {
         />
         <p className="underline ml-3">Go Back</p>
       </Link>
-      <div className="flex justify-between p-4 w-[830px] mx-auto rounded-md bg-white dark:bg-[#1E2139] text-black text-sm font-bold mb-5">
+      <div className="flex justify-between p-4 w-[750px] mx-auto rounded-md bg-white dark:bg-[#1E2139] text-black text-sm font-bold mb-5">
         <div className="flex gap-3 items-center">
           <p className="dark:text-white">Status</p>
           <Button
@@ -207,7 +206,7 @@ const UserPage = () => {
         <div>
           <Button
             size={"lg"}
-            className="mr-2 rounded-3xl text-black hover:bg-white bg-white hover:text-black"
+            className="mr-2 rounded-3xl text-gray-500 text-sm hover:bg-[#DFE3FA] bg-[#DFE3FA] hover:text-gray-500"
             variant={"outline"}
             onClick={() => setIsDrawerOpen(true)}
           >
@@ -215,7 +214,7 @@ const UserPage = () => {
           </Button>
           <Dialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
             <DialogTrigger asChild>
-              <Button size={"lg"} variant="destructive" className="rounded-3xl">
+              <Button size={"lg"} variant="destructive" className="rounded-full bg-red-500 hover:bg-red-500">
                 Delete
               </Button>
             </DialogTrigger>
@@ -242,13 +241,13 @@ const UserPage = () => {
           <Button
             size={"lg"}
             onClick={() => markAsPaid(invoice.id)}
-            className="ml-2 border rounded-3xl text-black hover:bg-white bg-white hover:text-black"
+            className="ml-2 p-6 w-32 rounded-full text-white hover:bg-[#7C5DFA] bg-[#7C5DFA] hover:text-white"
           >
             Mark as paid
           </Button>
         </div>
       </div>
-      <div className="p-4 border w-[830px] mx-auto rounded-md bg-white dark:bg-[#1E2139] dark:text-white text-black text-lg font-semibold">
+      <div className="p-4 border w-[750px] mx-auto rounded-md bg-white dark:bg-[#1E2139] dark:text-white text-black text-lg font-semibold">
         <div className="flex justify-between px-3">
           <div>
             <p>Invoice ID</p>
@@ -309,7 +308,7 @@ const UserPage = () => {
         onOpenChange={setIsDrawerOpen}
         direction="left"
       >
-        <DrawerContent>
+        <DrawerContent className="border-2 ">
           <form onSubmit={handleSubmit(handleEditSave)} className="p-5">
             <ScrollArea className="h-[520px] rounded-md px-5 ">
               <div>
@@ -428,7 +427,7 @@ const UserPage = () => {
                       <Calendar
                         className="z-10"
                         mode="single"
-                        selected={selectedDate}
+                        selected={selectedDate || undefined}
                         onSelect={handleDateSelect}
                         disabled={(date) =>
                           date > new Date() || date < new Date("1900-01-01")
@@ -472,7 +471,7 @@ const UserPage = () => {
                       <Input
                         type="number"
                         className={cn(
-                          "outline-none    rounded-md dark:bg-[#252945]",
+                          "outline-none rounded-md dark:bg-[#252945]",
                           errors.items?.[index]?.price
                             ? "border-red-500"
                             : "border-slate-300"
@@ -483,8 +482,8 @@ const UserPage = () => {
                         placeholder="Price"
                         onChange={handlePriceChange(index)}
                       />
-                      <div className="border p-2 px-8 rounded-md dark:bg-[#252945]">
-                        <p>${getValues(`items.${index}.total`)}</p>
+                      <div className="border text-center p-2 rounded-md dark:bg-[#252945]">
+                        <p className="w-20">${getValues(`items.${index}.total`)}</p>
                       </div>
                       <Button
                         onClick={() => remove(index)}
@@ -505,11 +504,11 @@ const UserPage = () => {
                     onClick={() =>
                       append({ ItemName: "", Quantity: 1, price: 0, total: 0 })
                     }
-                    size={"sm"}
-                    className="mr-2 text-sm dark:bg-[#252945] dark:text-white"
+                    size={"lg"}
+                    className="mr-2 text-sm text-[#9277FF] hover:bg-[#DFE3FA] hover:text-black w-96 bg-transparent mt-3 px-5 rounded-full"
                   >
                     <Image
-                      src="/add.svg"
+                      src="/plus.svg"
                       height={20}
                       width={20}
                       alt="add"
@@ -521,18 +520,19 @@ const UserPage = () => {
               </div>
             </ScrollArea>
             <DrawerFooter>
-              <div className="flex gap-2 mx-auto">
+              <div className="flex gap-2 justify-end pr-5">
                 <Button
-                  className="w-40 dark:bg-[#252945] dark:text-white"
+                  className="w-24 p-6 text-[#7C5DFA] bg-[#F9FAFE] rounded-full hover:bg-[#F9FAFE]"
                   onClick={() => setIsDrawerOpen(false)}
                 >
-                  Discard
+                  Cancel
                 </Button>
                 <Button
+                size={"lg"}
                   type="submit"
-                  className="w-40 dark:bg-[#252945] dark:text-white"
+                  className="w-32 p-6 bg-[#7C5DFA] hover:bg-[#7C5DFA] dark:text-white rounded-full"
                 >
-                  Save & send
+                  Save changes
                 </Button>
                 <DrawerClose className=""></DrawerClose>
               </div>
