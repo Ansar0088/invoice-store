@@ -98,11 +98,11 @@ const UserPage = () => {
     const updatedInvoice : any = {
       ...formData,
       id: invoice?.id || Date.now().toString(),
-      date: selectedDate,
+      date: selectedDate ? selectedDate.toISOString() : "",
     };
     const storedInvoices = localStorage.getItem("invoices");
     if (storedInvoices) {
-      const invoices = JSON.parse(storedInvoices);
+      const invoices: FormInputs[]  = JSON.parse(storedInvoices);
       const updatedInvoices = invoices.map((inv: FormInputs) =>
         inv.id === updatedInvoice.id ? updatedInvoice : inv
       );
@@ -119,11 +119,14 @@ const UserPage = () => {
   const handleDateSelect = (date: Date | undefined) => {
     if (date) {
       setSelectedDate(date);
+    } else {
+      setSelectedDate(null);
     }
     setIsCalendarOpen(false);
   };
+  
 
-  const isValidDate = (date: Date | null) => {
+  const isValidDate = (date: any) => {
     return date instanceof Date && !isNaN(date.getTime());
   };
 
@@ -259,7 +262,7 @@ const UserPage = () => {
             <p className=" mt-2">Invoice date</p>
             <p className="text-gray-400 text-xs">
                 {isValidDate(selectedDate)
-                  ? format(selectedDate, "dd-MM-yyyy")
+                  ? format(selectedDate!, "dd-MM-yyyy") 
                   : "No Date Selected"}
               </p>
           </div>
