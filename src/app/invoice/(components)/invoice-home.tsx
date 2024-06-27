@@ -97,23 +97,33 @@ const InvoiceHome = () => {
     }
   };
   // fields Addition logic
-  const handleQuantityChange =
-    (index: number) => (event: React.ChangeEvent<HTMLInputElement>) => {
-      const quantity = parseFloat(event.target.value);
+  const watchItems = watch("items");
+
+  useEffect(() => {
+    watchItems.forEach((item, index) => {
+      const quantity = getValues(`items.${index}.Quantity`);
       const price = getValues(`items.${index}.price`);
       const total = quantity * price;
-      setValue(`items.${index}.Quantity`, quantity);
       setValue(`items.${index}.total`, total);
-    };
+    });
+  }, [watchItems, getValues, setValue]);
 
-  const handlePriceChange =
-    (index: number) => (event: React.ChangeEvent<HTMLInputElement>) => {
-      const price = parseFloat(event.target.value);
-      const quantity = getValues(`items.${index}.Quantity`);
-      const total = quantity * price;
-      setValue(`items.${index}.price`, price);
-      setValue(`items.${index}.total`, total);
-    };
+  const handleQuantityChange = (index: number) => (event: React.ChangeEvent<HTMLInputElement>) => {
+    const quantity = parseFloat(event.target.value);
+    const price = getValues(`items.${index}.price`);
+    const total = quantity * price;
+    setValue(`items.${index}.Quantity`, quantity);
+    setValue(`items.${index}.total`, total);
+  };
+
+  const handlePriceChange = (index: number) => (event: React.ChangeEvent<HTMLInputElement>) => {
+    const price = parseFloat(event.target.value);
+    const quantity = getValues(`items.${index}.Quantity`);
+    const total = quantity * price;
+    setValue(`items.${index}.price`, price);
+    setValue(`items.${index}.total`, total);
+  };
+
 
   const handleSaveAsDraft = () => {
     const draftInvoice = {
@@ -136,7 +146,7 @@ const InvoiceHome = () => {
     <div className="container mt-20">
       <div className="flex justify-between items-center w-[750px] mx-auto">
         <div className="flex flex-col items-center">
-          <p className="mr-3 text-3xl font-bold font-Ubantu-Bold" >Invoices</p>
+          <p className="mr-3 text-3xl font-bold font-Ubantu-Bold">Invoices</p>
           <p className="text-sm  ml-5 mt-1 text-slate-500 dark:text-gray-300">
             There are {filteredInvoices.length} total invoices
           </p>
@@ -209,8 +219,11 @@ const InvoiceHome = () => {
                 New invoice
               </Button>
             </DrawerTrigger>
-            <DrawerContent>
-              <form onSubmit={handleSubmit(onSubmit)} className="p-5">
+            <DrawerContent className="w-3/6 bg-transparent ml-28 p-0">
+              <form
+                onSubmit={handleSubmit(onSubmit)}
+                className="p-5 dark:bg-[#1E2139] bg-white pt-10 rounded-tr-3xl rounded-br-3xl"
+              >
                 <ScrollArea className="h-[520px] rounded-md px-5">
                   <div>
                     <p>Street Address</p>
@@ -233,14 +246,14 @@ const InvoiceHome = () => {
                       </p>
                     )}
                   </div>
-                  <div className="flex gap-3 mt-5">
+                  <div className="flex gap-7 mt-5">
                     <div>
                       <p className="text-xs mb-1">City</p>
                       <Input
                         placeholder="City"
                         className={cn(
-                          "outline-none border rounded-md dark:bg-[#252945]",
-                          errors.city ? "border-red-500" : "border-slate-300"
+                          "outline-none rounded-md dark:bg-[#252945]",
+                          errors.city ? "border-red-500" : ""
                         )}
                         {...register("city", { required: true })}
                       />
@@ -255,10 +268,8 @@ const InvoiceHome = () => {
                       <Input
                         placeholder="Post Code"
                         className={cn(
-                          "outline-none border rounded-md dark:bg-[#252945]",
-                          errors.postCode
-                            ? "border-red-500"
-                            : "border-slate-300"
+                          "outline-none rounded-md dark:bg-[#252945]",
+                          errors.postCode ? "border-red-500" : ""
                         )}
                         {...register("postCode", { required: true })}
                       />
@@ -273,8 +284,8 @@ const InvoiceHome = () => {
                       <Input
                         placeholder="Country"
                         className={cn(
-                          "outline-none border rounded-md dark:bg-[#252945]",
-                          errors.country ? "border-red-500" : "border-slate-300"
+                          "outline-none w-full rounded-md dark:bg-[#252945]",
+                          errors.country ? "border-red-500" : ""
                         )}
                         {...register("country", { required: true })}
                       />
@@ -296,7 +307,7 @@ const InvoiceHome = () => {
                       <Image
                         src="/calendar.svg"
                         height={40}
-                        width={40}
+                        width={30}
                         alt="calendar"
                         className="absolute right-0"
                       />
@@ -327,9 +338,7 @@ const InvoiceHome = () => {
                       placeholder="Client's Name"
                       className={cn(
                         "outline-none border rounded-md dark:bg-[#252945]",
-                        errors.ClientsName
-                          ? "border-red-500"
-                          : "border-slate-300"
+                        errors.ClientsName ? "border-red-500" : ""
                       )}
                       {...register("ClientsName", { required: true })}
                     />
@@ -345,9 +354,7 @@ const InvoiceHome = () => {
                       placeholder="Client's Email"
                       className={cn(
                         "outline-none rounded-md dark:bg-[#252945]",
-                        errors.ClientsEmail
-                          ? "border-red-500"
-                          : "border-slate-300"
+                        errors.ClientsEmail ? "border-red-500" : ""
                       )}
                       {...register("ClientsEmail", {
                         required: "This field is required",
@@ -365,6 +372,12 @@ const InvoiceHome = () => {
                     )}
                     <div className="mt-5">
                       <p className="font-bold">Items List</p>
+                      <div className="flex mt-5">
+                        <p className="w-full">Item Name</p>
+                        <p className="w-full">Qty.</p>
+                        <p className="w-full">Price</p>
+                        <p className="w-full pr-1">Total</p>
+                      </div>
                       {fields.map((field, index) => (
                         <div key={field.id} className="flex items-center gap-2">
                           <Input
@@ -380,7 +393,7 @@ const InvoiceHome = () => {
                           <Input
                             type="number"
                             className={cn(
-                              "outline-none    rounded-md dark:bg-[#252945]"
+                              "outline-none rounded-md dark:bg-[#252945]"
                             )}
                             {...register(`items.${index}.Quantity`, {
                               required: true,
@@ -406,7 +419,7 @@ const InvoiceHome = () => {
                             onClick={() => remove(index)}
                             variant={"outline"}
                             size={"sm"}
-                            className="border-none m-2"
+                            className="border-none m-2 bg-transparent hover:bg-transparent"
                           >
                             <Image
                               src="/delete.svg"
@@ -429,8 +442,8 @@ const InvoiceHome = () => {
                         })
                       }
                       size={"sm"}
-                      className="mr-2 text-sm text-[#9277FF] hover:text-black w-96 bg-transparent mt-3 px-5 rounded-full"
-                      >
+                      className="mr-2 text-sm text-[#9277FF] hover:text-black w-full bg-transparent mt-3 px-5 rounded-full"
+                    >
                       <Image
                         src="/plus.svg"
                         height={20}
@@ -445,15 +458,14 @@ const InvoiceHome = () => {
                 <DrawerFooter>
                   <div className="flex justify-between w-full">
                     <DrawerClose>
-                      <Button 
-                        className="w-32 p-6 bg-[#F9FAFE] hover:bg-[#F9FAFE]  rounded-full">
+                      <Button className="w-32 hover:bg-[#1E2139] p-6 dark:bg-[#F9FAFE]   rounded-full">
                         Discard
                       </Button>
                     </DrawerClose>
                     <div>
                       <Button
                         onClick={handleSaveAsDraft}
-                        className="w-32 p-6 bg-[#1E2139] hover:bg-[#1E2139] dark:text-white rounded-full"
+                        className="w-32 p-6 bg-[#25283f]  hover:bg-[#1E2139] dark:text-white rounded-full"
                       >
                         Save as draft
                       </Button>
@@ -461,7 +473,7 @@ const InvoiceHome = () => {
                         <Button
                           type="submit"
                           className="ml-2 w-32 p-6 bg-[#7C5DFA] hover:bg-[#7C5DFA] dark:text-white rounded-full"
-                          >
+                        >
                           Save & send
                         </Button>
                       </DrawerClose>
@@ -476,7 +488,7 @@ const InvoiceHome = () => {
       <div className="w-[750px] mx-auto">
         {filteredInvoices.length > 0 ? (
           <>
-            <ScrollArea className="h-[480px] rounded-md px-5 mt-10">
+            <ScrollArea className="h-[460px] rounded-md px-5 mt-10">
               <Reorder.Group
                 axis="y"
                 values={filteredInvoices}

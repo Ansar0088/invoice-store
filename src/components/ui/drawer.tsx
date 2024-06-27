@@ -28,7 +28,7 @@
   >(({ className, ...props }, ref) => (
     <DrawerPrimitive.Overlay
       ref={ref}
-      className={cn("fixed inset-0 z-50 bg-black/80", className)}
+      className={cn("fixed  bg-black/80", className)}
       {...props}
     />
   ))
@@ -48,7 +48,7 @@
         )}
         {...props}
       >
-        <div className="mx-auto mt-4 h-2 w-[100px] rounded-full bg-muted" />
+        <div className="mx-auto  w-[100px] rounded-full bg-muted" />
         {children}
       </DrawerPrimitive.Content>
     </DrawerPortal>

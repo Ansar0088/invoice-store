@@ -276,14 +276,14 @@ const UserPage = () => {
             </div>
           </div>
         </div>
-        <div className="bg-[#F9FAFE] dark:bg-[#252945] px-5 py-3 mt-5">
+        <div className="bg-[#F9FAFE] dark:bg-[#252945] px-5 py-3 pt-1 mt-3">
           <div className=" flex justify-between items-between mt-5 rounded-xl font-semibold">
             <p>Items Name</p>
             <p>Quantity</p>
             <p>Price</p>
             <p>Total</p>
           </div>
-          <ScrollArea className="h-[120px] rounded-md px-5 mt-2">
+          <ScrollArea className="h-16 rounded-md px-5 mt-2">
             {invoice.items && invoice.items.length > 0 ? (
               invoice.items.map((item, index) => (
                 <div
@@ -311,15 +311,15 @@ const UserPage = () => {
         onOpenChange={setIsDrawerOpen}
         direction="left"
       >
-        <DrawerContent className="border-2 ">
-          <form onSubmit={handleSubmit(handleEditSave)} className="p-5">
+            <DrawerContent className="w-3/6 bg-transparent ml-28 p-0">
+            <form onSubmit={handleSubmit(handleEditSave)} className="p-5 dark:bg-[#1E2139] bg-white pt-10 rounded-tr-3xl rounded-br-3xl">
             <ScrollArea className="h-[520px] rounded-md px-5 ">
               <div>
                 <p>Street Address</p>
                 <Input
                   className={cn(
                     "outline-none border rounded-md dark:bg-[#252945]",
-                    errors.streetAddress ? "border-red-500" : "border-slate-300"
+                    errors.streetAddress ? "border-red-500" : ""
                   )}
                   placeholder="address"
                   {...register("streetAddress", { required: true })}
@@ -330,13 +330,13 @@ const UserPage = () => {
                   </span>
                 )}
               </div>
-              <div className="flex gap-3 mt-5">
+              <div className="flex gap-7 mt-5">
                 <div>
                   <p className="text-xs mb-1">City</p>
                   <Input
                     className={cn(
-                      "outline-none border rounded-md dark:bg-[#252945]",
-                      errors.city ? "border-red-500" : "border-slate-300"
+                      "outline-none  rounded-md dark:bg-[#252945]",
+                      errors.city ? "border-red-500" : ""
                     )}
                     {...register("city", { required: true })}
                   />
@@ -350,8 +350,8 @@ const UserPage = () => {
                   <p className="text-xs mb-1">Post Code</p>
                   <Input
                     className={cn(
-                      "outline-none border rounded-md dark:bg-[#252945]",
-                      errors.postCode ? "border-red-500" : "border-slate-300"
+                      "outline-none  rounded-md dark:bg-[#252945]",
+                      errors.postCode ? "border-red-500" : ""
                     )}
                     {...register("postCode", { required: true })}
                   />
@@ -365,8 +365,8 @@ const UserPage = () => {
                   <p className="text-xs mb-1">Country</p>
                   <Input
                     className={cn(
-                      "outline-none border rounded-md dark:bg-[#252945]",
-                      errors.country ? "border-red-500" : "border-slate-300"
+                      "outline-none  rounded-md dark:bg-[#252945]",
+                      errors.country ? "border-red-500" : ""
                     )}
                     {...register("country", { required: true })}
                   />
@@ -382,8 +382,8 @@ const UserPage = () => {
                 <p className="text-xs font-normal mb-1">Clients Name</p>
                 <Input
                   className={cn(
-                    "outline-none border rounded-md dark:bg-[#252945]",
-                    errors.ClientsName ? "border-red-500" : "border-slate-300"
+                    "outline-none  rounded-md dark:bg-[#252945]",
+                    errors.ClientsName ? "border-red-500" : ""
                   )}
                   {...register("ClientsName", { required: true })}
                 />
@@ -395,8 +395,8 @@ const UserPage = () => {
                 <p className="text-xs font-normal mb-1 mt-3">Clients Email</p>
                 <Input
                   className={cn(
-                    "outline-none border rounded-md dark:bg-[#252945]",
-                    errors.ClientsEmail ? "border-red-500" : "border-slate-300"
+                    "outline-none  rounded-md dark:bg-[#252945]",
+                    errors.ClientsEmail ? "border-red-500" : ""
                   )}
                   {...register("ClientsEmail", { required: true })}
                 />
@@ -416,7 +416,7 @@ const UserPage = () => {
                     <Image
                       src="/calendar.svg"
                       height={40}
-                      width={40}
+                      width={30}
                       alt="calendar"
                       className="absolute right-0"
                     />
@@ -442,6 +442,12 @@ const UserPage = () => {
                 </div>
                 <div className="mt-5">
                   <p className="font-bold">Items List</p>
+                  <div className="flex mt-5">
+                    <p className="w-full">Item Name</p>
+                    <p className="w-full">Qty.</p>
+                    <p className="w-full">Price</p>
+                    <p className="w-full pr-5">Total</p>
+                  </div>
                   {fields.map((field, index) => (
                     <div key={field.id} className="flex items-center gap-2">
                       <Input
@@ -450,7 +456,7 @@ const UserPage = () => {
                           "outline-none rounded-md dark:bg-[#252945] ",
                           errors.items?.[index]?.ItemName
                             ? "border-red-500"
-                            : "border-slate-300"
+                            : ""
                         )}
                         {...register(`items.${index}.ItemName`, {
                           required: true,
@@ -463,7 +469,7 @@ const UserPage = () => {
                           "outline-none rounded-md dark:bg-[#252945]",
                           errors.items?.[index]?.Quantity
                             ? "border-red-500"
-                            : "border-slate-300"
+                            : ""
                         )}
                         {...register(`items.${index}.Quantity`, {
                           required: true,
@@ -477,7 +483,7 @@ const UserPage = () => {
                           "outline-none rounded-md dark:bg-[#252945]",
                           errors.items?.[index]?.price
                             ? "border-red-500"
-                            : "border-slate-300"
+                            : ""
                         )}
                         {...register(`items.${index}.price`, {
                           required: true,
@@ -492,7 +498,7 @@ const UserPage = () => {
                         onClick={() => remove(index)}
                         variant={"outline"}
                         size={"sm"}
-                        className="border-none m-2"
+                        className="border-none m-2 bg-transparent hover:bg-transparent"
                       >
                         <Image
                           src="/delete.svg"
@@ -508,7 +514,7 @@ const UserPage = () => {
                       append({ ItemName: "", Quantity: 1, price: 0, total: 0 })
                     }
                     size={"lg"}
-                    className="mr-2 text-sm text-[#9277FF] hover:bg-[#DFE3FA] hover:text-black w-96 bg-transparent mt-3 px-5 rounded-full"
+                    className="mr-2 text-sm text-[#9277FF] hover:bg-[#DFE3FA] hover:text-black w-full bg-transparent mt-3 px-5 rounded-full"
                   >
                     <Image
                       src="/plus.svg"
@@ -525,7 +531,7 @@ const UserPage = () => {
             <DrawerFooter>
               <div className="flex gap-2 justify-end pr-5">
                 <Button
-                  className="w-24 p-6 text-[#7C5DFA] bg-[#F9FAFE] rounded-full hover:bg-[#F9FAFE]"
+                  className="w-24 p-6  dark:bg-[#F9FAFE] bg-[#1E2139] hover:bg-[#1E2139] rounded-full"
                   onClick={() => setIsDrawerOpen(false)}
                 >
                   Cancel
