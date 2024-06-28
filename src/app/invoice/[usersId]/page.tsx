@@ -60,7 +60,7 @@ const UserPage = () => {
           const invoices = JSON.parse(storedInvoices);
           const foundInvoice = invoices.find((inv: any) => inv.id === usersId);
           if (foundInvoice) {
-            setInvoice(foundInvoice);       
+            setInvoice(foundInvoice);
             setValue("streetAddress", foundInvoice.streetAddress);
             setValue("city", foundInvoice.city);
             setValue("postCode", foundInvoice.postCode);
@@ -70,8 +70,7 @@ const UserPage = () => {
             if (foundInvoice.date) {
               setSelectedDate(new Date(foundInvoice.date));
             }
-            setValue('items',foundInvoice.items)
-         
+            setValue("items", foundInvoice.items);
           }
         } catch (error) {
           console.error("Error parsing invoices from local storage:", error);
@@ -95,14 +94,14 @@ const UserPage = () => {
   };
 
   const handleEditSave: SubmitHandler<FormInputs> = (formData) => {
-    const updatedInvoice : any = {
+    const updatedInvoice: any = {
       ...formData,
       id: invoice?.id || Date.now().toString(),
       date: selectedDate ? selectedDate.toISOString() : "",
     };
     const storedInvoices = localStorage.getItem("invoices");
     if (storedInvoices) {
-      const invoices: FormInputs[]  = JSON.parse(storedInvoices);
+      const invoices: FormInputs[] = JSON.parse(storedInvoices);
       const updatedInvoices = invoices.map((inv: FormInputs) =>
         inv.id === updatedInvoice.id ? updatedInvoice : inv
       );
@@ -124,7 +123,6 @@ const UserPage = () => {
     }
     setIsCalendarOpen(false);
   };
-  
 
   const isValidDate = (date: any) => {
     return date instanceof Date && !isNaN(date.getTime());
@@ -175,7 +173,7 @@ const UserPage = () => {
 
   return (
     <div className="container mt-10">
-      <Link href="/invoice" className="pl-48 mb-3 flex items-center">
+      <Link href="/invoice" className="pl-64 mb-3 flex items-center">
         <Image
           src="/left.svg"
           height={30}
@@ -191,12 +189,16 @@ const UserPage = () => {
           <Button
             size="lg"
             className={cn(
-              "rounded-md w-32 text-sm font-semibold dark:bg-[#2B2736]",
+              "relative rounded-md w-32 text-sm font-semibold dark:bg-[#2B2736]",
               {
-                "bg-[#F3FDF9] text-[#84E4B6]": invoice.status === "paid",
-                "bg-[#FFF8F0] text-[#FF9F4D]": invoice.status === "pending",
-                "bg-[#E0E0E0] text-white": invoice.status === "draft",
-              }
+                "bg-[#F3FDF9] text-[#84E4B6] before:bg-[#84E4B6]":
+                  invoice.status === "paid",
+                "bg-[#FFF8F0] text-[#FF9F4D] before:bg-[#FF9F4D]":
+                  invoice.status === "pending",
+                "bg-[#E0E0E0] text-white before:bg-gray-400":
+                  invoice.status === "draft",
+              },
+              "before:content-[''] before:absolute before:top-1/2 before:left-7 before:transform before:-translate-y-1/2 before:w-2 before:h-2 before:rounded-full"
             )}
           >
             {invoice.status === "paid"
@@ -217,14 +219,20 @@ const UserPage = () => {
           </Button>
           <Dialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
             <DialogTrigger asChild>
-              <Button size={"lg"} variant="destructive" className="rounded-full bg-red-500 hover:bg-red-500">
+              <Button
+                size={"lg"}
+                variant="destructive"
+                className="rounded-full bg-red-500 hover:bg-red-500"
+              >
                 Delete
               </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
               <DialogHeader>
                 <DialogDescription>
-                  <p className="text-2xl text-black dark:text-white font-semibold">Confirm Deletion</p>
+                  <p className="text-2xl text-black dark:text-white font-semibold">
+                    Confirm Deletion
+                  </p>
                   Are you sure you want to delete this invoice?
                 </DialogDescription>
               </DialogHeader>
@@ -261,14 +269,13 @@ const UserPage = () => {
             <p className="text-gray-400 text-xs">{invoice.postCode}</p>
             <p className=" mt-2">Invoice date</p>
             <p className="text-gray-400 text-xs">
-                {isValidDate(selectedDate)
-                  ? format(selectedDate!, "dd-MM-yyyy") 
-                  : "No Date Selected"}
-              </p>
+              {isValidDate(selectedDate)
+                ? format(selectedDate!, "dd-MM-yyyy")
+                : "No Date Selected"}
+            </p>
           </div>
           <div>
-            <p className="text-black dark:text-white">Email & Address</p>
-            <div className="text-sm text-gray-400  flex flex-col gap-3">
+            <div className="text-sm text-gray-400  flex flex-col ">
               <p>{invoice.streetAddress}</p>
               <p>{invoice.city}</p>
               <p>{invoice.country}</p>
@@ -311,11 +318,15 @@ const UserPage = () => {
         onOpenChange={setIsDrawerOpen}
         direction="left"
       >
-            <DrawerContent className="w-3/6 bg-transparent ml-28 p-0">
-            <form onSubmit={handleSubmit(handleEditSave)} className="p-5 dark:bg-[#1E2139] bg-white pt-10 rounded-tr-3xl rounded-br-3xl">
+        <DrawerContent className="w-3/6 bg-transparent z-10">
+          <form
+            onSubmit={handleSubmit(handleEditSave)}
+            className="p-5 dark:bg-[#1E2139] bg-white pt-10 rounded-tr-3xl rounded-br-3xl pl-32"
+          >
             <ScrollArea className="h-[520px] rounded-md px-5 ">
               <div>
-                <p>Street Address</p>
+                <p className="mb-5 text-[#7C5DFA] font-semibold">Bill Form</p>
+                <p className="text-gray-400">Street Address</p>
                 <Input
                   className={cn(
                     "outline-none border rounded-md dark:bg-[#252945]",
@@ -332,7 +343,7 @@ const UserPage = () => {
               </div>
               <div className="flex gap-7 mt-5">
                 <div>
-                  <p className="text-xs mb-1">City</p>
+                  <p className="text-gray-400 mb-1">City</p>
                   <Input
                     className={cn(
                       "outline-none  rounded-md dark:bg-[#252945]",
@@ -347,7 +358,7 @@ const UserPage = () => {
                   )}
                 </div>
                 <div>
-                  <p className="text-xs mb-1">Post Code</p>
+                  <p className="text-gray-400 mb-1">Post Code</p>
                   <Input
                     className={cn(
                       "outline-none  rounded-md dark:bg-[#252945]",
@@ -362,7 +373,7 @@ const UserPage = () => {
                   )}
                 </div>
                 <div>
-                  <p className="text-xs mb-1">Country</p>
+                  <p className="text-gray-400 mb-1">Country</p>
                   <Input
                     className={cn(
                       "outline-none  rounded-md dark:bg-[#252945]",
@@ -378,8 +389,8 @@ const UserPage = () => {
                 </div>
               </div>
               <div className="mt-5">
-                <p className="text-sm font-bold mb-4">Bill To</p>
-                <p className="text-xs font-normal mb-1">Clients Name</p>
+                <p className="text-[#7C5DFA] font-semibold mb-4">Bill To</p>
+                <p className="text-gray-400 mb-1">Clients Name</p>
                 <Input
                   className={cn(
                     "outline-none  rounded-md dark:bg-[#252945]",
@@ -392,7 +403,7 @@ const UserPage = () => {
                     This field is required
                   </span>
                 )}
-                <p className="text-xs font-normal mb-1 mt-3">Clients Email</p>
+                <p className="text-gray-400 mb-1 mt-3">Clients Email</p>
                 <Input
                   className={cn(
                     "outline-none  rounded-md dark:bg-[#252945]",
@@ -406,7 +417,7 @@ const UserPage = () => {
                   </span>
                 )}
                 <div className="relative mt-5">
-                  <p className="text-xs font-semibold mt-3">Invoice Date</p>
+                  <p className="text-gray-400 mt-3">Invoice Date</p>
                   <Button
                     type="button"
                     variant={"outline"}
@@ -440,7 +451,7 @@ const UserPage = () => {
                     </div>
                   )}
                 </div>
-                <div className="mt-5">
+                <div className="mt-5 text-gray-400">
                   <p className="font-bold">Items List</p>
                   <div className="flex mt-5">
                     <p className="w-full">Item Name</p>
@@ -481,9 +492,7 @@ const UserPage = () => {
                         type="number"
                         className={cn(
                           "outline-none rounded-md dark:bg-[#252945]",
-                          errors.items?.[index]?.price
-                            ? "border-red-500"
-                            : ""
+                          errors.items?.[index]?.price ? "border-red-500" : ""
                         )}
                         {...register(`items.${index}.price`, {
                           required: true,
@@ -492,7 +501,9 @@ const UserPage = () => {
                         onChange={handlePriceChange(index)}
                       />
                       <div className="border text-center p-2 rounded-md dark:bg-[#252945]">
-                        <p className="w-20">${getValues(`items.${index}.total`)}</p>
+                        <p className="w-20">
+                          ${getValues(`items.${index}.total`)}
+                        </p>
                       </div>
                       <Button
                         onClick={() => remove(index)}
@@ -537,7 +548,7 @@ const UserPage = () => {
                   Cancel
                 </Button>
                 <Button
-                size={"lg"}
+                  size={"lg"}
                   type="submit"
                   className="w-32 p-6 bg-[#7C5DFA] hover:bg-[#7C5DFA] dark:text-white rounded-full"
                 >

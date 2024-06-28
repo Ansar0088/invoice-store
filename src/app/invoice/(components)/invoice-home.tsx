@@ -108,22 +108,23 @@ const InvoiceHome = () => {
     });
   }, [watchItems, getValues, setValue]);
 
-  const handleQuantityChange = (index: number) => (event: React.ChangeEvent<HTMLInputElement>) => {
-    const quantity = parseFloat(event.target.value);
-    const price = getValues(`items.${index}.price`);
-    const total = quantity * price;
-    setValue(`items.${index}.Quantity`, quantity);
-    setValue(`items.${index}.total`, total);
-  };
+  const handleQuantityChange =
+    (index: number) => (event: React.ChangeEvent<HTMLInputElement>) => {
+      const quantity = parseFloat(event.target.value);
+      const price = getValues(`items.${index}.price`);
+      const total = quantity * price;
+      setValue(`items.${index}.Quantity`, quantity);
+      setValue(`items.${index}.total`, total);
+    };
 
-  const handlePriceChange = (index: number) => (event: React.ChangeEvent<HTMLInputElement>) => {
-    const price = parseFloat(event.target.value);
-    const quantity = getValues(`items.${index}.Quantity`);
-    const total = quantity * price;
-    setValue(`items.${index}.price`, price);
-    setValue(`items.${index}.total`, total);
-  };
-
+  const handlePriceChange =
+    (index: number) => (event: React.ChangeEvent<HTMLInputElement>) => {
+      const price = parseFloat(event.target.value);
+      const quantity = getValues(`items.${index}.Quantity`);
+      const total = quantity * price;
+      setValue(`items.${index}.price`, price);
+      setValue(`items.${index}.total`, total);
+    };
 
   const handleSaveAsDraft = () => {
     const draftInvoice = {
@@ -219,14 +220,17 @@ const InvoiceHome = () => {
                 New invoice
               </Button>
             </DrawerTrigger>
-            <DrawerContent className="w-3/6 bg-transparent ml-28 p-0">
+            <DrawerContent className="w-3/6 bg-transparent z-10">
               <form
                 onSubmit={handleSubmit(onSubmit)}
-                className="p-5 dark:bg-[#1E2139] bg-white pt-10 rounded-tr-3xl rounded-br-3xl"
+                className="p-5 dark:bg-[#1E2139] bg-white pt-10 rounded-tr-3xl rounded-br-3xl pl-32"
               >
                 <ScrollArea className="h-[520px] rounded-md px-5">
                   <div>
-                    <p>Street Address</p>
+                    <p className="text-[#7C5DFA] text-sm font-bold mb-5">
+                      Bill From
+                    </p>
+                    <p className="text-gray-400">Street Address</p>
                     <Input
                       {...register("streetAddress", {
                         required: true,
@@ -248,7 +252,7 @@ const InvoiceHome = () => {
                   </div>
                   <div className="flex gap-7 mt-5">
                     <div>
-                      <p className="text-xs mb-1">City</p>
+                      <p className="text-gray-400 mb-1">City</p>
                       <Input
                         placeholder="City"
                         className={cn(
@@ -264,7 +268,7 @@ const InvoiceHome = () => {
                       )}
                     </div>
                     <div>
-                      <p className="text-xs mb-1">Post Code</p>
+                      <p className="text-gray-400 mb-1">Post Code</p>
                       <Input
                         placeholder="Post Code"
                         className={cn(
@@ -280,7 +284,7 @@ const InvoiceHome = () => {
                       )}
                     </div>
                     <div>
-                      <p className="text-xs mb-1">Country</p>
+                      <p className="text-gray-400 mb-1">Country</p>
                       <Input
                         placeholder="Country"
                         className={cn(
@@ -297,7 +301,7 @@ const InvoiceHome = () => {
                     </div>
                   </div>
                   <div className="relative">
-                    <p className="text-xs font-semibold mt-3">Invoice Date</p>
+                    <p className="text-gray-400 mt-3">Invoice Date</p>
                     <Button
                       type="button"
                       variant={"outline"}
@@ -332,8 +336,10 @@ const InvoiceHome = () => {
                     )}
                   </div>
                   <div className="mt-5">
-                    <p className="text-sm font-bold mb-4">Bill To</p>
-                    <p className="text-xs font-normal mb-1">Clients Name</p>
+                    <p className="text-[#7C5DFA] text-sm font-bold mb-4">
+                      Bill To
+                    </p>
+                    <p className="text-gray-400 mb-1">Clients Name</p>
                     <Input
                       placeholder="Client's Name"
                       className={cn(
@@ -347,9 +353,7 @@ const InvoiceHome = () => {
                         This field is required
                       </span>
                     )}
-                    <p className="text-xs font-normal mb-1 mt-3">
-                      Client Email
-                    </p>
+                    <p className="text-gray-400 mb-1 mt-3">Client Email</p>
                     <Input
                       placeholder="Client's Email"
                       className={cn(
@@ -371,8 +375,8 @@ const InvoiceHome = () => {
                       </span>
                     )}
                     <div className="mt-5">
-                      <p className="font-bold">Items List</p>
-                      <div className="flex mt-5">
+                      <p className="text-gray-400">Items List</p>
+                      <div className="flex mt-5 text-gray-400">
                         <p className="w-full">Item Name</p>
                         <p className="w-full">Qty.</p>
                         <p className="w-full">Price</p>
@@ -527,14 +531,16 @@ const InvoiceHome = () => {
                           size="lg"
                           variant="outline"
                           className={cn(
-                            "rounded-md w-32 text-sm font-semibold dark:bg-[#2B2736] relative",
+                            "relative rounded-md w-32 text-sm font-semibold dark:bg-[#2B2736]",
                             {
-                              "bg-[#F3FDF9] text-[#84E4B6] hover:text-[#84E4B6]":
+                              "bg-[#F3FDF9] text-[#84E4B6] hover:text-[#84E4B6] before:bg-[#84E4B6]":
                                 invoice.status === "paid",
-                              "bg-[#FFF8F0] text-[#FF9F4D] hover:text-[#FF9F4D]":
+                              "bg-[#FFF8F0] text-[#FF9F4D] hover:text-[#FF9F4D] before:bg-[#FF9F4D]":
                                 invoice.status === "pending",
-                              "bg-[#E0E0E0]": invoice.status === "draft",
-                            }
+                              "bg-[#E0E0E0] before:bg-gray-400":
+                                invoice.status === "draft",
+                            },
+                            "before:absolute before:top-1/2 before:left-6 before:transform before:-translate-y-1/2 before:w-2 before:h-2 before:rounded-full"
                           )}
                         >
                           {invoice.status

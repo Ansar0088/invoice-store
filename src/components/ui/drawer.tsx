@@ -43,7 +43,7 @@
       <DrawerPrimitive.Content
         ref={ref}
         className={cn(
-          "fixed inset-x-0 bottom-0 z-50 mt-24 flex h-full w-2/5 flex-col rounded-t-[10px] bg-background",
+          "fixed inset-x-0 bottom-0 left-0 z-50 mt-24 flex h-full w-2/5 flex-col rounded-t-[10px] bg-background",
           className
         )}
         {...props}

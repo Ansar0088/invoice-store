@@ -25,7 +25,7 @@ const Page = () => {
             <Link href="/invoice">
               <Button
                 type="button"
-                className="rounded-2xl px-6 py-4 text-xs font-bold text-blue-600 hover:bg-[#EFEFEF] bg-[#EFEFEF]"
+                className="rounded-full px-6 py-4 text-xs font-bold text-blue-600 hover:bg-[#EFEFEF] bg-[#EFEFEF]"
               >
                 View as Demo
               </Button>

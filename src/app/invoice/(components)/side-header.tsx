@@ -15,7 +15,7 @@ const Sideheader = () => {
     setTheme(theme === "dark" ? "light" : "dark");
   };
   return (
-    <div className="bg-[#373B53] h-screen w-28 flex flex-col items-center justify-between rounded-tr-3xl rounded-br-3xl z-1">
+    <div className="bg-[#373B53] fixed z-50 h-screen w-28 flex flex-col items-center justify-between rounded-tr-3xl rounded-br-3xl">
       <div>
         <Image
           src="/side.png"
