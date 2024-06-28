@@ -462,7 +462,7 @@ const InvoiceHome = () => {
                 <DrawerFooter>
                   <div className="flex justify-between w-full">
                     <DrawerClose>
-                      <Button className="w-32 hover:bg-[#1E2139] p-6 dark:bg-[#F9FAFE]   rounded-full">
+                      <Button type="button" className="w-32 hover:bg-[#1E2139] p-6 dark:bg-[#F9FAFE]   rounded-full">
                         Discard
                       </Button>
                     </DrawerClose>
