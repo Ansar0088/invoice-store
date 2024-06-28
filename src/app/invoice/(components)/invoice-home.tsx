@@ -223,7 +223,7 @@ const InvoiceHome = () => {
             <DrawerContent className="w-3/6 bg-transparent z-10">
               <form
                 onSubmit={handleSubmit(onSubmit)}
-                className="p-5 dark:bg-[#1E2139] bg-white pt-10 rounded-tr-3xl rounded-br-3xl pl-32"
+                className="p-5 dark:bg-[#1E2139] bg-white pt-10 rounded-tr-3xl rounded-br-3xl pl-32 h-full"
               >
                 <ScrollArea className="h-[520px] rounded-md px-5">
                   <div>
@@ -473,14 +473,12 @@ const InvoiceHome = () => {
                       >
                         Save as draft
                       </Button>
-                      <DrawerClose>
                         <Button
                           type="submit"
                           className="ml-2 w-32 p-6 bg-[#7C5DFA] hover:bg-[#7C5DFA] dark:text-white rounded-full"
                         >
                           Save & send
                         </Button>
-                      </DrawerClose>
                     </div>
                   </div>
                 </DrawerFooter>

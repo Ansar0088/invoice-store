@@ -321,7 +321,7 @@ const UserPage = () => {
         <DrawerContent className="w-3/6 bg-transparent z-10">
           <form
             onSubmit={handleSubmit(handleEditSave)}
-            className="p-5 dark:bg-[#1E2139] bg-white pt-10 rounded-tr-3xl rounded-br-3xl pl-32"
+            className="p-5 dark:bg-[#1E2139] bg-white pt-10 rounded-tr-3xl rounded-br-3xl pl-32 h-full"
           >
             <ScrollArea className="h-[520px] rounded-md px-5 ">
               <div>
@@ -554,7 +554,6 @@ const UserPage = () => {
                 >
                   Save changes
                 </Button>
-                <DrawerClose className=""></DrawerClose>
               </div>
             </DrawerFooter>
           </form>
