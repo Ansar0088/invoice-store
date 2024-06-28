@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { useForm, SubmitHandler, useFieldArray } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
-import { Reorder } from "framer-motion";
+import { Reorder, useDragControls } from "framer-motion";
 import {
   Drawer,
   DrawerClose,
@@ -24,6 +24,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { FormInputs } from "./types";
 import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
+import { useToast } from "@/components/ui/use-toast";
 
 const InvoiceHome = () => {
   const [invoices, setInvoices] = useState<FormInputs[]>([]);
@@ -31,6 +32,7 @@ const InvoiceHome = () => {
   const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   const {
     register,
@@ -38,15 +40,16 @@ const InvoiceHome = () => {
     control,
     setValue,
     watch,
+    reset,
     getValues,
-    formState: { errors },
+    formState: { errors, isValid,isSubmitSuccessful },
   } = useForm<FormInputs>({
     defaultValues: {
       items: [{ ItemName: "", Quantity: 1, price: 0, total: 0 }],
     },
     mode: "onChange",
   });
-
+ 
   const { fields, append, remove } = useFieldArray({
     control,
     name: "items",
@@ -60,21 +63,35 @@ const InvoiceHome = () => {
     setSelectedDate(date);
   };
 
+  const { toast } = useToast();
+
   const onSubmit: SubmitHandler<FormInputs> = (formData) => {
+    reset();
     const newInvoice: FormInputs = {
       ...formData,
       id: Date.now().toString(),
       status: "pending",
       date: selectedDate ? selectedDate.getTime() : 0,
     };
+  
     const updatedInvoices = [...invoices, newInvoice];
     setInvoices(updatedInvoices);
     setFilteredInvoices(updatedInvoices);
     localStorage.setItem("invoices", JSON.stringify(updatedInvoices));
+  
+    toast({
+      description: "Invoice has been successfully submitted.",
+      variant:'success',
+       className:'p-4 group',
+       
+    });
+  
+    setIsDrawerOpen(false);
   };
+  
 
   const router = useRouter();
-  // get invoices from localStorage
+
   useEffect(() => {
     const storedInvoices = localStorage.getItem("invoices");
     if (storedInvoices) {
@@ -83,7 +100,6 @@ const InvoiceHome = () => {
       setFilteredInvoices(parsedInvoices);
     }
   }, []);
-  // Filter invoices by status
 
   const handleCheckboxChange = (status: string) => {
     setSelectedStatus(status);
@@ -96,7 +112,7 @@ const InvoiceHome = () => {
       );
     }
   };
-  // fields Addition logic
+
   const watchItems = watch("items");
 
   useEffect(() => {
@@ -142,6 +158,7 @@ const InvoiceHome = () => {
   const isValidDate = (date: Date | undefined) => {
     return date instanceof Date && !isNaN(date.getTime());
   };
+  const dragControls = useDragControls();
 
   return (
     <div className="container mt-20">
@@ -203,12 +220,17 @@ const InvoiceHome = () => {
             </DropdownMenuContent>
           </DropdownMenu>
 
-          <Drawer direction="left">
-            <DrawerTrigger>
+          <Drawer
+            open={isDrawerOpen}
+            onOpenChange={setIsDrawerOpen}
+            direction="left"
+          >
+            <DrawerTrigger asChild>
               <Button
                 size={"lg"}
                 variant={"secondary"}
                 className="rounded-full bg-[#7C5DFA] p-6 w-32 font-bold text-sm text-white hover:bg-[#7C5DFA]"
+                onClick={() => setIsDrawerOpen(true)}
               >
                 <Image
                   src="/add.svg"
@@ -408,7 +430,7 @@ const InvoiceHome = () => {
                           <Input
                             type="number"
                             className={cn(
-                              "outline-none  rounded-md dark:bg-[#252945]"
+                              "outline-none rounded-md dark:bg-[#252945]"
                             )}
                             {...register(`items.${index}.price`, {
                               required: true,
@@ -462,23 +484,29 @@ const InvoiceHome = () => {
                 <DrawerFooter>
                   <div className="flex justify-between w-full">
                     <DrawerClose>
-                      <Button type="button" className="w-32 hover:bg-[#1E2139] p-6 dark:bg-[#F9FAFE]   rounded-full">
+                      <Button
+                        type="button"
+                        className="w-32 hover:bg-[#1E2139] p-6 dark:bg-[#F9FAFE] rounded-full"
+                      >
                         Discard
                       </Button>
                     </DrawerClose>
                     <div>
                       <Button
                         onClick={handleSaveAsDraft}
-                        className="w-32 p-6 bg-[#25283f]  hover:bg-[#1E2139] dark:text-white rounded-full"
+                        className="w-32 p-6 bg-[#25283f] hover:bg-[#25283f] dark:text-white rounded-full"
                       >
                         Save as draft
                       </Button>
-                        <Button
-                          type="submit"
-                          className="ml-2 w-32 p-6 bg-[#7C5DFA] hover:bg-[#7C5DFA] dark:text-white rounded-full"
-                        >
-                          Save & send
-                        </Button>
+                      <DrawerClose>
+                      <Button
+                        disabled={!isValid}
+                        type="submit"
+                        className="ml-2 w-32 p-6 bg-[#7C5DFA] hover:bg-[#7C5DFA] dark:text-white rounded-full"
+                      >
+                        Save & send
+                      </Button>
+                      </DrawerClose>
                     </div>
                   </div>
                 </DrawerFooter>
@@ -507,6 +535,7 @@ const InvoiceHome = () => {
                     <Reorder.Item
                       key={invoice.id}
                       value={invoice}
+                      dragControls={dragControls}
                       className="hover:border-blue-700 mx-auto p-7 flex text-sm justify-between items-center border rounded-lg cursor-pointer bg-white dark:bg-[#1E2139] font-bold"
                       onClick={() => router.push(`/invoice/${invoice.id}`)}
                     >
@@ -552,7 +581,9 @@ const InvoiceHome = () => {
                   );
                 })}
               </Reorder.Group>
+        
             </ScrollArea>
+           
           </>
         ) : (
           <>

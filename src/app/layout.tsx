@@ -3,6 +3,7 @@ import "./globals.css";
 import SideHeader from "./invoice/(components)/side-header";
 import { ThemeProvider } from "./invoice/(components)/theme-provider";
 import Head from "next/head";
+import { Toaster } from "@/components/ui/toaster"
 const Spartan = League_Spartan({ subsets: ["latin"] });
 
 export default function RootLayout({
@@ -29,6 +30,7 @@ export default function RootLayout({
             <div className="w-full bg-[#F2F2F2] dark:bg-[#020817]">
               {children}
             </div>
+            <Toaster />
           </div>
         </ThemeProvider>
       </body>
